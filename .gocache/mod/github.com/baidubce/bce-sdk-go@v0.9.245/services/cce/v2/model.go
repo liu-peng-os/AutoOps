@@ -1,0 +1,1056 @@
+// Copyright 2019 Baidu Inc. All rights reserved
+// Use of this source code is governed by a CCE
+// license that can be found in the LICENSE file.
+/*
+modification history
+--------------------
+2020/07/28 16:26:00, by jichao04@baidu.com, create
+*/
+/*
+CCE V2 版本 GO SDK, Interface 定义
+*/
+
+package v2
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/baidubce/bce-sdk-go/services/cce/v2/types"
+	"github.com/baidubce/bce-sdk-go/services/vpc"
+)
+
+// Interface 定义 CCE V2 SDK
+type Interface interface {
+	CreateCluster(args *CreateClusterArgs) (*CreateClusterResponse, error)
+	GetCluster(clusterID string) (*GetClusterResponse, error)
+	DeleteCluster(args *DeleteClusterArgs) (*DeleteClusterResponse, error)
+	ListClusters(args *ListClustersArgs) (*ListClustersResponse, error)
+
+	CreateInstances(args *CreateInstancesArgs) (*CreateInstancesResponse, error)
+	GetInstance(args *GetInstanceArgs) (*GetInstanceResponse, error)
+	DeleteInstances(args *DeleteInstancesArgs) (*DeleteInstancesResponse, error)
+	ListInstancesByPage(args *ListInstancesByPageArgs) (*ListInstancesResponse, error)
+	CreateScaleUpInstanceGroupTask(args *CreateScaleUpInstanceGroupTaskArgs) (*CreateTaskResp, error)
+	CreateScaleDownInstanceGroupTask(args *CreateScaleDownInstanceGroupTaskArgs) (*CreateTaskResp, error)
+
+	GetClusterQuota() (*GetQuotaResponse, error)
+	GetClusterNodeQuota(clusterID string) (*GetQuotaResponse, error)
+
+	CheckContainerNetworkCIDR(args *CheckContainerNetworkCIDRArgs) (*CheckContainerNetworkCIDRResponse, error)
+	CheckClusterIPCIDR(args *CheckClusterIPCIDRArgs) (*CheckClusterIPCIDRResponse, error)
+	RecommendContainerCIDR(args *RecommendContainerCIDRArgs) (*RecommendContainerCIDRResponse, error)
+	RecommendClusterIPCIDR(args *RecommendClusterIPCIDRArgs) (*RecommendClusterIPCIDRResponse, error)
+
+	GetTask(args *GetTaskArgs) (*GetTaskResp, error)
+	ListTasks(args *ListTasksArgs) (*ListTaskResp, error)
+
+	GetInstanceCRD(args *GetInstanceCRDArgs) (*GetInstanceCRDResponse, error)
+	UpdateInstanceCRD(args *UpdateInstanceCRDRequest) (*CommonResponse, error)
+
+	// 修改节点缩容保护状态
+	UpdateInstanceScaleDownProtection(args *UpdateInstanceScaleDownProtectionArgs) (*UpdateInstanceScaleDownProtectionResponse, error)
+}
+
+// CreateClusterArgs 为后续支持clientToken预留空间
+type CreateClusterArgs struct {
+	CreateClusterRequest *CreateClusterRequest
+}
+
+type DeleteClusterArgs struct {
+	ClusterID         string
+	DeleteResource    bool
+	DeleteCDSSnapshot bool
+	MoveOut           bool
+}
+
+type ListClustersArgs struct {
+	KeywordType ClusterKeywordType
+	Keyword     string
+	OrderBy     ClusterOrderBy
+	Order       Order
+	PageNum     int
+	PageSize    int
+}
+
+type UpdateClusterForbidDeleteArgs struct {
+	ClusterID                        string
+	UpdateClusterForbidDeleteRequest UpdateClusterForbidDeleteRequest
+}
+
+type UpdateClusterForbidDeleteRequest struct {
+	ForbidDelete bool
+}
+
+type CreateInstancesArgs struct {
+	ClusterID string
+	Instances []*InstanceSet
+}
+
+type GetInstanceArgs struct {
+	ClusterID  string
+	InstanceID string
+}
+
+type GetInstanceCRDArgs struct {
+	ClusterID string
+	// cceInstanceID , cce 节点的唯一标志，不是底层机器的instanceID
+	CCEInstanceID string
+}
+
+type DeleteInstancesArgs struct {
+	ClusterID              string
+	DeleteInstancesRequest *DeleteInstancesRequest
+}
+
+type ListInstancesByPageArgs struct {
+	ClusterID string
+	Params    *ListInstancesByPageParams
+}
+
+// CreateClusterRequest - 创建 Cluster 参数
+type CreateClusterRequest struct {
+	ClusterSpec *types.ClusterSpec   `json:"cluster"`
+	MasterSpecs []*InstanceSet       `json:"masters,omitempty"`
+	NodeSpecs   []*InstanceSet       `json:"nodes,omitempty"`
+	Options     CreateClusterOptions `json:"options"`
+}
+type CreateClusterOptions struct {
+	SkipNetworkCheck *bool `json:"skipNetworkCheck"`
+}
+type InstanceSet struct {
+	InstanceSpec types.InstanceSpec `json:"instanceSpec"`
+	Count        int                `json:"count"`
+}
+
+type ExistedInstanceInCluster struct {
+	ExistedInstanceID string `json:"existedInstanceID"`
+	MachineType       string `json:"machineType"`
+	Ip                string `json:"ip"`
+	Name              string `json:"name"`
+	InstanceName      string `json:"instanceName"`
+}
+
+// GetEventStepsResponse 查询 Cluster/Instance 创建/删除 返回
+type GetEventStepsResponse struct {
+	Status    string  `json:"status"`
+	Steps     []*Step `json:"steps"`
+	RequestID string  `json:"requestID"`
+}
+
+// Step - 集群操作步骤
+type Step struct {
+	StepName   string `json:"stepName"`
+	StepStatus string `json:"stepStatus"`
+	StepInfo
+}
+
+// StepInfo - 步骤信息
+type StepInfo struct {
+	Ready        bool              `json:"ready,omitempty"`
+	StartTime    time.Time         `json:"startTime,omitempty"`    // 第一次开始时间
+	FinishedTime time.Time         `json:"finishedTime,omitempty"` // 最后一次成功时间
+	CostSeconds  int               `json:"costSeconds,omitempty"`  // 花费时间
+	RetryCount   int               `json:"retryCount,omitempty"`   // 重试次数
+	TraceID      string            `json:"traceID,omitempty"`      // cce 侧 requestID, errorInfo 暴露后，去除该字段
+	ErrMsg       string            `json:"errMsg,omitempty"`       // 失败信息
+	ErrorInfo    ReconcileResponse `json:"errInfo,omitempty"`      // 失败信息
+}
+
+// ReconcileResponse controller reconcile 流程中暴露出去的信息
+type ReconcileResponse struct {
+	Code       string `json:"code,omitempty"`
+	Message    string `json:"message,omitempty"`
+	TraceID    string `json:"traceID,omitempty"` // message里可能有底层返回的requestID，这里用TraceID作区分
+	Suggestion string `json:"suggestion,omitempty"`
+}
+
+// ListInstancesByPageParams - 分页查询集群实例列表参数
+type ListInstancesByPageParams struct {
+	KeywordType          InstanceKeywordType `json:"keywordType"`
+	Keyword              string              `json:"keyword"`
+	OrderBy              InstanceOrderBy     `json:"orderBy"`
+	Order                Order               `json:"order"`
+	PageNo               int                 `json:"pageNo"`
+	PageSize             int                 `json:"pageSize"`
+	EnableInternalFields bool                `json:"enableInternalFields"`
+}
+
+// CreateClusterResponse - 创建 Cluster 返回
+type CreateClusterResponse struct {
+	ClusterID string `json:"clusterID"`
+	RequestID string `json:"requestID"`
+}
+
+// UpdateClusterResponse - 更新 Cluster 返回
+type UpdateClusterResponse struct {
+	Cluster   *Cluster `json:"cluster"`
+	RequestID string   `json:"requestID"`
+}
+
+// GetClusterResponse - 查询 Cluster 返回
+type GetClusterResponse struct {
+	Cluster   *Cluster `json:"cluster"`
+	RequestID string   `json:"requestID"`
+}
+
+// DeleteClusterResponse - 删除 Cluster 返回
+type DeleteClusterResponse struct {
+	RequestID string `json:"requestID"`
+}
+
+// ListClustersResponse - List 用户 Cluster 返回
+type ListClustersResponse struct {
+	ClusterPage *ClusterPage `json:"clusterPage"`
+	RequestID   string       `json:"requestID"`
+}
+
+// CreateInstancesResponse - 创建 Instances 返回
+type CreateInstancesResponse struct {
+	CCEInstanceIDs []string `json:"cceInstanceIDs"`
+	RequestID      string   `json:"requestID"`
+}
+
+type UpdateInstanceArgs struct {
+	ClusterID    string
+	InstanceID   string
+	InstanceSpec *types.InstanceSpec
+}
+
+// UpdateInstancesResponse - 更新 Instances 返回
+type UpdateInstancesResponse struct {
+	Instance  *Instance `json:"instance"`
+	RequestID string    `json:"requestID"`
+}
+
+// ClusterPage - 集群分页查询返回
+type ClusterPage struct {
+	KeywordType ClusterKeywordType `json:"keywordType"`
+	Keyword     string             `json:"keyword"`
+	OrderBy     ClusterOrderBy     `json:"orderBy"`
+	Order       Order              `json:"order"`
+	PageNo      int                `json:"pageNo"`
+	PageSize    int                `json:"pageSize"`
+	TotalCount  int                `json:"totalCount"`
+	ClusterList []*Cluster         `json:"clusterList"`
+}
+
+// ClusterKeywordType 集群模糊查询字段
+type ClusterKeywordType string
+
+const (
+	// ClusterKeywordTypeClusterName 集群模糊查询字段: ClusterName
+	ClusterKeywordTypeClusterName ClusterKeywordType = "clusterName"
+	// ClusterKeywordTypeClusterID 集群模糊查询字段: ClusterID
+	ClusterKeywordTypeClusterID ClusterKeywordType = "clusterID"
+)
+
+// ClusterOrderBy 集群查询排序字段
+type ClusterOrderBy string
+
+const (
+	// ClusterOrderByClusterName 集群查询排序字段: ClusterName
+	ClusterOrderByClusterName ClusterOrderBy = "clusterName"
+	// ClusterOrderByClusterID 集群查询排序字段: ClusterID
+	ClusterOrderByClusterID ClusterOrderBy = "clusterID"
+	// ClusterOrderByCreatedAt 集群查询排序字段: CreatedAt
+	ClusterOrderByCreatedAt ClusterOrderBy = "createdAt"
+)
+
+// Order 集群查询排序
+type Order string
+
+const (
+	// OrderASC 集群查询排序: 升序
+	OrderASC Order = "ASC"
+	// OrderDESC 集群查询排序: 降序
+	OrderDESC Order = "DESC"
+)
+
+const (
+	// PageNoDefault 分页查询默认页码
+	PageNoDefault int = 1
+	// PageSizeDefault 分页查询默认页面元素数目
+	PageSizeDefault int = 10
+)
+
+// GetInstanceResponse - 查询 Instances 返回
+type GetInstanceResponse struct {
+	Instance  *Instance `json:"instance"`
+	RequestID string    `json:"requestID"`
+}
+
+// DeleteInstancesResponse - 删除 Instances 返回
+type DeleteInstancesResponse struct {
+	RequestID string `json:"requestID"`
+}
+
+// ListInstancesResponse - List Instances 返回
+type ListInstancesResponse struct {
+	InstancePage *InstancePage `json:"instancePage"`
+	RequestID    string        `json:"requestID"`
+}
+
+// GetQuotaResponse - 查询 Quota 返回
+type GetQuotaResponse struct {
+	types.Quota
+	RequestID string `json:"requestID"`
+}
+
+// Cluster - Cluster 返回
+type Cluster struct {
+	Spec   *ClusterSpec   `json:"spec"`
+	Status *ClusterStatus `json:"status"`
+
+	CreatedAt time.Time `json:"createdAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+}
+
+// 作为返回值的ClusterSpec
+type ClusterSpec struct {
+	ClusterID   string            `json:"clusterID"`
+	ClusterName string            `json:"clusterName"`
+	ClusterType types.ClusterType `json:"clusterType"`
+
+	Description string `json:"description"`
+
+	K8SVersion types.K8SVersion `json:"k8sVersion"`
+
+	VPCID   string `json:"vpcID"`
+	VPCCIDR string `json:"vpcCIDR"`
+
+	Plugins []string `json:"plugins"`
+
+	MasterConfig           types.MasterConfig           `json:"masterConfig"`
+	ContainerNetworkConfig types.ContainerNetworkConfig `json:"containerNetworkConfig"`
+
+	Tags []types.Tag `json:"tags"`
+}
+
+// ClusterStatus - Cluster Status
+type ClusterStatus struct {
+	ClusterBLB BLB `json:"clusterBLB"`
+
+	ClusterPhase types.ClusterPhase `json:"clusterPhase"`
+
+	NodeNum int `json:"nodeNum"`
+}
+
+// BLB 定义 BLB 类型
+type BLB struct {
+	ID    string `json:"id"`
+	VPCIP string `json:"vpcIP"`
+	EIP   string `json:"eip"`
+}
+
+// InstancePage - 节点分页查询返回
+type InstancePage struct {
+	ClusterID    string              `json:"clusterID"`
+	KeywordType  InstanceKeywordType `json:"keywordType"`
+	Keyword      string              `json:"keyword"`
+	OrderBy      InstanceOrderBy     `json:"orderBy"`
+	Order        Order               `json:"order"`
+	PageNo       int                 `json:"pageNo"`
+	PageSize     int                 `json:"pageSize"`
+	TotalCount   int                 `json:"totalCount"`
+	InstanceList []*Instance         `json:"instanceList"`
+}
+
+// InstanceKeywordType 节点模糊查询字段
+type InstanceKeywordType string
+
+const (
+	// InstanceKeywordTypeInstanceName 节点模糊查询字段: InstanceName
+	InstanceKeywordTypeInstanceName InstanceKeywordType = "instanceName"
+	// InstanceKeywordTypeInstanceID 节点模糊查询字段: InstanceID
+	InstanceKeywordTypeInstanceID      InstanceKeywordType = "instanceID"
+	InstanceKeywordTypeK8sNodeName     InstanceKeywordType = "k8sNodeName"
+	InstanceKeywordTypeVpcIP           InstanceKeywordType = "vpcIP"
+	InstanceKeywordTypeInstanceGroupID InstanceKeywordType = "instanceGroupID"
+)
+
+// InstanceOrderBy 节点查询排序字段
+type InstanceOrderBy string
+
+const (
+	// InstanceOrderByInstanceName 节点查询排序字段: InstanceName
+	InstanceOrderByInstanceName InstanceOrderBy = "instanceName"
+	// InstanceOrderByInstanceID 节点查询排序字段: InstanceID
+	InstanceOrderByInstanceID InstanceOrderBy = "instanceID"
+	// InstanceOrderByCreatedAt 节点查询排序字段: CreatedAt
+	InstanceOrderByCreatedAt InstanceOrderBy = "createdAt"
+)
+
+// Instance - 节点详情
+// 作为sdk返回结果的Instance
+type Instance struct {
+	Spec   *types.InstanceSpec `json:"spec"`
+	Status *InstanceStatus     `json:"status"`
+
+	CreatedAt time.Time `json:"createdAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+}
+
+type InstanceCRD struct {
+	ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   types.InstanceSpec `json:"spec,omitempty"`
+	Status InstanceStatus     `json:"status,omitempty"`
+}
+
+type ClusterCRD struct {
+	ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   types.ClusterSpec `json:"spec,omitempty"`
+	Status ClusterStatus     `json:"status,omitempty"`
+}
+
+type ObjectMeta struct {
+	Name         string `json:"name,omitempty"`
+	GenerateName string `json:"generateName,omitempty"`
+	ClusterName  string `json:"clusterName,omitempty"`
+}
+
+// InstanceStatus - Instance Status
+type InstanceStatus struct {
+	Machine Machine `json:"machine"`
+
+	InstancePhase types.InstancePhase `json:"instancePhase"`
+	MachineStatus types.ServerStatus  `json:"machineStatus"`
+}
+
+// Machine - 定义机器相关信息
+type Machine struct {
+	InstanceID   string `json:"instanceID"`
+	InstanceUUID string `json:"instanceUUID,omitempty"`
+
+	OrderID string `json:"orderID,omitempty"`
+
+	MountList []types.MountConfig `json:"mountList,omitempty"`
+
+	VPCIP     string `json:"vpcIP,omitempty"`
+	VPCIPIPv6 string `json:"vpcIPIPv6,omitempty"`
+
+	EIP string `json:"eip,omitempty"`
+
+	K8SNodeName string `json:"k8sNodeName,omitempty"`
+	Hostname    string `json:"hostname,omitempty"`
+}
+
+// DeleteInstancesRequest - 删除节点请求
+type DeleteInstancesRequest struct {
+	InstanceIDs  []string            `json:"instanceIDs,omitempty"`
+	DeleteOption *types.DeleteOption `json:"deleteOption,omitempty"`
+}
+
+// InstanceKeyType - ListInstanceByPage 参数
+type InstanceKeyType string
+
+// NetworkConflictType 冲突类型
+type NetworkConflictType string
+
+const (
+	// ContainerCIDRAndNodeCIDRConflict 容器网段和本集群的节点网段冲突
+	ContainerCIDRAndNodeCIDRConflict NetworkConflictType = "ContainerCIDRAndNodeCIDR"
+	// ContainerCIDRAndExistedClusterContainerCIDRConflict 容器网段和 VPC 内已有集群的容器网段冲突
+	ContainerCIDRAndExistedClusterContainerCIDRConflict NetworkConflictType = "ContainerCIDRAndExistedClusterContainerCIDR"
+	// ContainerCIDRAndVPCRouteConflict 容器网段与 VPC 路由冲突
+	ContainerCIDRAndVPCRouteConflict NetworkConflictType = "ContainerCIDRAndVPCRoute"
+	// ClusterIPCIDRAndNodeCIDRConflict ClusterIP 网段与本集群节点网段冲突
+	ClusterIPCIDRAndNodeCIDRConflict NetworkConflictType = "ClusterIPCIDRAndNodeCIDR"
+	// ClusterIPCIDRAndContainerCIDRConflict ClusterIP 网段与本集群容器网段冲突
+	ClusterIPCIDRAndContainerCIDRConflict NetworkConflictType = "ClusterIPCIDRAndContainerCIDR"
+)
+
+// PrivateNetString IPv4/IPv6 私有网络地址类型
+type PrivateNetString string
+
+const (
+	// PrivateIPv4Net10 - IPv4 10 段
+	PrivateIPv4Net10 PrivateNetString = "10.0.0.0/8"
+
+	// PrivateIPv4Net172 - IPv4 172 段
+	PrivateIPv4Net172 PrivateNetString = "172.16.0.0/12"
+
+	// PrivateIPv4Net192 - IPv4 192 段
+	PrivateIPv4Net192 PrivateNetString = "192.168.0.0/16"
+
+	// PrivateIPv6Net - IPv6 段
+	PrivateIPv6Net PrivateNetString = "fc00::/7"
+)
+
+const (
+	// MaxClusterIPServiceNum 集群最大的 ClusterIP Service 数量
+	MaxClusterIPServiceNum = 65536
+)
+
+// CheckContainerNetworkCIDRRequest 包含检查容器网络网段冲突的请求参数
+type CheckContainerNetworkCIDRArgs struct {
+	VPCID             string                       `json:"vpcID"`
+	VPCCIDR           string                       `json:"vpcCIDR"`
+	VPCCIDRIPv6       string                       `json:"vpcCIDRIPv6"`
+	ContainerCIDR     string                       `json:"containerCIDR"`
+	ContainerCIDRIPv6 string                       `json:"containerCIDRIPv6"`
+	ClusterIPCIDR     string                       `json:"clusterIPCIDR"`
+	ClusterIPCIDRIPv6 string                       `json:"clusterIPCIDRIPv6"`
+	MaxPodsPerNode    int                          `json:"maxPodsPerNode"`
+	IPVersion         types.ContainerNetworkIPType `json:"ipVersion"` // if not set, set ipv4
+}
+
+// CheckClusterIPCIDRequest - 检查 ClusterIP CIDR 请求
+type CheckClusterIPCIDRArgs struct {
+	VPCID             string                       `json:"vpcID"`
+	VPCCIDR           string                       `json:"vpcCIDR"`
+	VPCCIDRIPv6       string                       `json:"vpcCIDRIPv6"`
+	ClusterIPCIDR     string                       `json:"clusterIPCIDR"`
+	ClusterIPCIDRIPv6 string                       `json:"clusterIPCIDRIPv6"`
+	IPVersion         types.ContainerNetworkIPType `json:"ipVersion"` // if not set, set ipv4
+}
+
+// CheckContainerNetworkCIDRResponse 检查容器网络网段冲突的响应
+type CheckContainerNetworkCIDRResponse struct {
+	MaxNodeNum int `json:"maxNodeNum"`
+	NetworkConflictInfo
+	RequestID string `json:"requestID"`
+}
+
+// CheckClusterIPCIDRResponse - 检查 ClusterIP CIDR 返回
+type CheckClusterIPCIDRResponse struct {
+	IsConflict bool   `json:"isConflict"`
+	ErrMsg     string `json:"errMsg"`
+	RequestID  string `json:"requestID"`
+}
+
+// RecommendContainerCIDRRequest 推荐容器网段的请求参数
+type RecommendContainerCIDRArgs struct {
+	VPCID       string `json:"vpcID"`
+	VPCCIDR     string `json:"vpcCIDR"`
+	VPCCIDRIPv6 string `json:"vpcCIDRIPv6"`
+	// ClusterMaxNodeNum 集群节点的最大规模
+	ClusterMaxNodeNum int `json:"clusterMaxNodeNum"`
+	MaxPodsPerNode    int `json:"maxPodsPerNode"`
+	// PrivateNetCIDRs 候选的容器网段列表，只能从 [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] 里选择
+	PrivateNetCIDRs     []PrivateNetString           `json:"privateNetCIDRs"`
+	PrivateNetCIDRIPv6s []PrivateNetString           `json:"privateNetCIDRIPv6s"`
+	K8SVersion          types.K8SVersion             `json:"k8sVersion"`
+	IPVersion           types.ContainerNetworkIPType `json:"ipVersion"` // if not set, set ipv4
+}
+
+// RecommendContainerCIDRResponse 推荐容器网段的响应
+type RecommendContainerCIDRResponse struct {
+	RecommendedContainerCIDRs     []string `json:"recommendedContainerCIDRs"`
+	RecommendedContainerCIDRIPv6s []string `json:"recommendedContainerCIDRIPv6s"`
+	IsSuccess                     bool     `json:"isSuccess"`
+	ErrMsg                        string   `json:"errMsg"`
+	RequestID                     string   `json:"requestID"`
+}
+
+// RecommendClusterIPCIDRRequest 推荐 ClusterIP 网段的请求参数
+type RecommendClusterIPCIDRArgs struct {
+	VPCCIDR           string `json:"vpcCIDR"`
+	VPCCIDRIPv6       string `json:"vpcCIDRIPv6"`
+	ContainerCIDR     string `json:"containerCIDR"`
+	ContainerCIDRIPv6 string `json:"containerCIDRIPv6"`
+	// ClusterMaxServiceNum 集群 Service 最大规模
+	ClusterMaxServiceNum int `json:"clusterMaxServiceNum"`
+	// PrivateNetCIDRs 候选的 ClusterIP 网段列表，只能从 [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] 里选择
+	PrivateNetCIDRs     []PrivateNetString           `json:"privateNetCIDRs"`
+	PrivateNetCIDRIPv6s []PrivateNetString           `json:"privateNetCIDRIPv6s"`
+	IPVersion           types.ContainerNetworkIPType `json:"ipVersion"` // if not set, set ipv4
+}
+
+// RecommendClusterIPCIDRResponse 推荐 ClusterIP 网段的响应
+type RecommendClusterIPCIDRResponse struct {
+	RecommendedClusterIPCIDRs     []string `json:"recommendedClusterIPCIDRs"`
+	RecommendedClusterIPCIDRIPv6s []string `json:"recommendedClusterIPCIDRIPv6s"`
+	IsSuccess                     bool     `json:"isSuccess"`
+	ErrMsg                        string   `json:"errMsg"`
+	RequestID                     string   `json:"requestID"`
+}
+
+// NetworkConflictInfo 容器网络整体配置冲突信息
+type NetworkConflictInfo struct {
+	IsConflict            bool                   `json:"isConflict"`
+	ErrMsg                string                 `json:"errMsg"`
+	ContainerCIDRConflict *ContainerCIDRConflict `json:"containerCIDRConflict"` // 容器网段冲突信息
+	ClusterIPCIDRConflict *ClusterIPCIDRConflict `json:"clusterIPCIDRConflict"` // ClusterIP 网段冲突信息
+}
+
+// ContainerCIDRConflict 容器网段冲突信息
+type ContainerCIDRConflict struct {
+	// NetworkConflictType 冲突类型，可取的值： ContainerCIDRAndNodeCIDRConflict、ContainerCIDRAndExistedClusterContainerCIDRConflict、ContainerCIDRAndVPCRouteConflict
+	ConflictType NetworkConflictType `json:"conflictType"`
+	// ConflictNodeCIDR 与容器网段冲突的节点网段，当且仅当 NetworkConflictType 为 ContainerCIDRAndNodeCIDRConflict 不为 nil
+	ConflictNodeCIDR *ConflictNodeCIDR `json:"conflictNodeCIDR"`
+	// ConflictCluster 与容器网段冲突的VPC内集群，当且仅当 NetworkConflictType 为 ContainerCIDRAndExistedClusterContainerCIDRConflict 不为 nil
+	ConflictCluster *ConflictCluster `json:"conflictCluster"`
+	// ConflictVPCRoute 与容器网段冲突的VPC路由，当且仅当 NetworkConflictType 为 ContainerCIDRAndVPCRouteConflict 不为 nil
+	ConflictVPCRoute *ConflictVPCRoute `json:"conflictVPCRoute"`
+}
+
+// ClusterIPCIDRConflict ClusterIP 网段冲突信息
+type ClusterIPCIDRConflict struct {
+	// NetworkConflictType 冲突类型，可取的值： ClusterIPCIDRAndNodeCIDRConflict、ClusterIPCIDRAndContainerCIDRConflict
+	ConflictType NetworkConflictType `json:"conflictType"`
+	// ConflictNodeCIDR 与 ClusterIP 网段冲突的节点网段，当且仅当 NetworkConflictType 为 ClusterIPCIDRAndNodeCIDRConflict 不为 nil
+	ConflictNodeCIDR *ConflictNodeCIDR `json:"conflictNodeCIDR"`
+	// ConflictContainerCIDR 与 ClusterIP 网段冲突的节点网段，当且仅当 NetworkConflictType 为 ClusterIPCIDRAndContainerCIDRConflict 不为 nil
+	ConflictContainerCIDR *ConflictContainerCIDR `json:"conflictContainerCIDR"`
+}
+
+// ConflictNodeCIDR 节点网段冲突信息
+type ConflictNodeCIDR struct {
+	NodeCIDR string `json:"nodeCIDR"`
+}
+
+// ConflictContainerCIDR 容器网段冲突信息
+type ConflictContainerCIDR struct {
+	ContainerCIDR string `json:"containerCIDR"`
+}
+
+// ConflictCluster 同一 VPC 内容器网段冲突的集群信息
+type ConflictCluster struct {
+	ClusterID     string `json:"clusterID"`
+	ContainerCIDR string `json:"containerCIDR"`
+}
+
+// ConflictVPCRoute 冲突的 VPC 路由
+type ConflictVPCRoute struct {
+	RouteRule vpc.RouteRule `json:"routeRule"`
+}
+
+type InstanceTemplate struct {
+	types.InstanceSpec `json:",inline"`
+}
+
+type CommonResponse struct {
+	RequestID string `json:"requestID"`
+}
+
+type InstanceGroup struct {
+	Spec      *InstanceGroupSpec   `json:"spec"`
+	Status    *InstanceGroupStatus `json:"status"`
+	CreatedAt time.Time            `json:"createdAt"`
+}
+
+type InstanceGroupSpec struct {
+	CCEInstanceGroupID string `json:"cceInstanceGroupID,omitempty"`
+	InstanceGroupName  string `json:"instanceGroupName"`
+
+	ClusterID    string            `json:"clusterID,omitempty"`
+	ClusterRole  types.ClusterRole `json:"clusterRole,omitempty"`
+	ShrinkPolicy ShrinkPolicy      `json:"shrinkPolicy,omitempty"`
+	UpdatePolicy UpdatePolicy      `json:"updatePolicy,omitempty"`
+	CleanPolicy  CleanPolicy       `json:"cleanPolicy,omitempty"`
+
+	InstanceTemplate InstanceTemplate `json:"instanceTemplate"`
+	Replicas         int              `json:"replicas"`
+
+	ClusterAutoscalerSpec *ClusterAutoscalerSpec `json:"clusterAutoscalerSpec,omitempty"`
+}
+
+type ShrinkPolicy string
+type UpdatePolicy string
+type CleanPolicy string
+
+const (
+	CleanPolicyRemain CleanPolicy = "Remain"
+	CleanPolicyDelete CleanPolicy = "Delete"
+)
+
+type ClusterAutoscalerSpec struct {
+	Enabled              bool `json:"enabled"`
+	MinReplicas          int  `json:"minReplicas"`
+	MaxReplicas          int  `json:"maxReplicas"`
+	ScalingGroupPriority int  `json:"scalingGroupPriority"`
+}
+
+// InstanceGroupStatus -
+type InstanceGroupStatus struct {
+	ReadyReplicas int          `json:"readyReplicas"`
+	Pause         *PauseDetail `json:"pause,omitempty"`
+}
+
+type PauseDetail struct {
+	Paused bool   `json:"paused"`
+	Reason string `json:"reason"`
+}
+
+// CreateInstanceGroupRequest - 创建InstanceGroup request
+type CreateInstanceGroupRequest struct {
+	types.InstanceGroupSpec
+}
+
+// CreateInstanceGroupResponse - 创建InstanceGroup response
+type CreateInstanceGroupResponse struct {
+	CommonResponse
+	InstanceGroupID string `json:"instanceGroupID"`
+}
+
+type ListInstanceGroupResponse struct {
+	CommonResponse
+	Page ListInstanceGroupPage `json:"page"`
+}
+
+type SyncInstancesResponse struct {
+	ClusterID string `json:"clusterID"`
+	RequestID string `json:"requestID"`
+}
+
+type ListInstanceGroupPage struct {
+	PageNo     int              `json:"pageNo"`
+	PageSize   int              `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
+	List       []*InstanceGroup `json:"list"`
+}
+
+type GetInstanceGroupResponse struct {
+	CommonResponse
+	InstanceGroup *InstanceGroup `json:"instanceGroup"`
+}
+
+type UpdateInstanceGroupReplicasRequest struct {
+	Replicas       int                 `json:"replicas"`
+	InstanceIDs    []string            `json:"instanceIDs"`
+	DeleteInstance bool                `json:"deleteInstance"`
+	DeleteOption   *types.DeleteOption `json:"deleteOption,omitempty"`
+}
+
+type UpdateInstanceGroupReplicasResponse struct {
+	CommonResponse
+}
+
+type UpdateInstanceGroupClusterAutoscalerSpecResponse struct {
+	CommonResponse
+}
+
+type DeleteInstanceGroupResponse struct {
+	CommonResponse
+}
+
+type ListInstancesByInstanceGroupIDPage struct {
+	PageNo     int         `json:"pageNo"`
+	PageSize   int         `json:"pageSize"`
+	TotalCount int         `json:"totalCount"`
+	List       []*Instance `json:"list"`
+}
+
+type ListInstancesByInstanceGroupIDResponse struct {
+	CommonResponse
+	Page ListInstancesByInstanceGroupIDPage `json:"page"`
+}
+
+type GetAutoscalerArgs struct {
+	ClusterID string
+}
+
+type GetAutoscalerResponse struct {
+	Autoscaler *Autoscaler `json:"autoscaler"`
+	RequestID  string      `json:"requestID"`
+}
+
+type UpdateAutoscalerArgs struct {
+	ClusterID        string
+	AutoscalerConfig ClusterAutoscalerConfig
+}
+
+type UpdateAutoscalerResponse struct {
+	CommonResponse
+}
+
+type CreateAutoscalerArgs struct {
+	ClusterID string
+}
+
+type CreateAutoscalerResponse struct {
+	CommonResponse
+}
+
+type Autoscaler struct {
+	ClusterID   string                  `json:"clusterID"`
+	ClusterName string                  `json:"clusterName"`
+	CAConfig    ClusterAutoscalerConfig `json:"caConfig,omitempty"`
+}
+
+type ClusterAutoscalerConfig struct {
+	KubeVersion    string                           `json:"kubeVersion,omitempty"`
+	ReplicaCount   int                              `json:"replicaCount"`
+	InstanceGroups []ClusterAutoscalerInstanceGroup `json:"instanceGroups,omitempty"`
+	// default: false
+	ScaleDownEnabled bool `json:"scaleDownEnabled"`
+	// 可选，缩容阈值百分比，范围(0, 100)
+	ScaleDownUtilizationThreshold *int `json:"scaleDownUtilizationThreshold,omitempty"`
+	// 可选，GPU缩容阈值百分比，范围(0, 100)
+	ScaleDownGPUUtilizationThreshold *int `json:"scaleDownGPUUtilizationThreshold,omitempty"`
+	// 可选，缩容触发时延，单位：m
+	ScaleDownUnneededTime *int `json:"scaleDownUnneededTime,omitempty"`
+	// 可选，扩容后缩容启动时延，单位：m
+	ScaleDownDelayAfterAdd *int `json:"scaleDownDelayAfterAdd,omitempty"`
+	// 可选，最大并发缩容数
+	MaxEmptyBulkDelete *int `json:"maxEmptyBulkDelete,omitempty"`
+	// 可选，
+	SkipNodesWithLocalStorage *bool `json:"skipNodesWithLocalStorage,omitempty"`
+	// 可选，
+	SkipNodesWithSystemPods *bool `json:"skipNodesWithSystemPods,omitempty"`
+	// supported: random, most-pods, least-waste, priority; default: random
+	Expander string `json:"expander"`
+
+	// 可选，支持保留用户自定义配置
+	CustomConfigs map[string]string `json:"customConfigs,omitempty"`
+}
+
+type ClusterAutoscalerInstanceGroup struct {
+	InstanceGroupID string
+	MinReplicas     int
+	MaxReplicas     int
+	Priority        int
+}
+
+type InstanceGroupListOption struct {
+	PageNo   int
+	PageSize int
+}
+
+type CreateInstanceGroupArgs struct {
+	ClusterID string
+	Request   *CreateInstanceGroupRequest
+}
+
+type ListInstanceGroupsArgs struct {
+	ClusterID  string
+	ListOption *InstanceGroupListOption
+}
+
+type ListInstanceByInstanceGroupIDArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+	PageNo          int
+	PageSize        int
+	KeywordType     InstanceKeywordType
+	Keyword         string
+	Phases          string
+}
+
+type GetInstanceGroupArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+}
+
+type UpdateInstanceGroupClusterAutoscalerSpecArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+	Request         *ClusterAutoscalerSpec
+}
+
+type UpdateInstanceGroupReplicasArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+	Request         *UpdateInstanceGroupReplicasRequest
+}
+
+type DeleteInstanceGroupArgs struct {
+	ClusterID           string
+	InstanceGroupID     string
+	DeleteInstances     bool
+	ReleaseAllResources bool
+}
+
+type AttachInstancesToInstanceGroupArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+	Request         *AttachInstancesToInstanceGroupRequest
+}
+
+type AttachInstancesToInstanceGroupRequest struct {
+	Incluster                          bool                        `json:"inCluster"`
+	UseInstanceGroupConfig             bool                        `json:"useInstanceGroupConfig"`
+	UseInstanceGroupConfigWithDiskInfo bool                        `json:"useInstanceGroupConfigWithDiskInfo"`
+	InstallGpuDriver                   bool                        `json:"installGpuDriver"`
+	ExistedInstances                   []*InstanceSet              `json:"existedInstances"`
+	ExistedInstancesInCluster          []*ExistedInstanceInCluster `json:"existedInstancesInCluster"`
+}
+
+type AttachInstancesToInstanceGroupResponse struct {
+	CommonResponse
+	TaskID string `json:"taskID"`
+}
+
+// KubeConfigType - kube config 类型
+type KubeConfigType string
+
+const (
+	// Deprecated
+	KubeConfigTypeInternal KubeConfigType = "internal"
+
+	// KubeConfigTypeVPC 使用 BLB VPCIP
+	KubeConfigTypeVPC KubeConfigType = "vpc"
+
+	// KubeConfigTypePublic 使用 BLB EIP
+	KubeConfigTypePublic KubeConfigType = "public"
+)
+
+type GetKubeConfigArgs struct {
+	ClusterID      string
+	KubeConfigType KubeConfigType
+}
+
+// GetKubeConfigResponse - 查询 KubeConfig 返回
+type GetKubeConfigResponse struct {
+	KubeConfigType KubeConfigType `json:"kubeConfigType"`
+	KubeConfig     string         `json:"kubeConfig"`
+	RequestID      string         `json:"requestID"`
+}
+
+func CheckKubeConfigType(kubeConfigType string) error {
+	if kubeConfigType != string(KubeConfigTypePublic) &&
+		kubeConfigType != string(KubeConfigTypeInternal) &&
+		kubeConfigType != string(KubeConfigTypeVPC) {
+		return fmt.Errorf("KubeConfigType %s not valid", kubeConfigType)
+	}
+	return nil
+}
+
+type CreateScaleUpInstanceGroupTaskArgs struct {
+	ClusterID       string
+	InstanceGroupID string
+	TargetReplicas  int
+}
+
+type CreateScaleDownInstanceGroupTaskArgs struct {
+	ClusterID            string              `json:"-"`
+	InstanceGroupID      string              `json:"-"`
+	InstancesToBeRemoved []string            `json:"instancesToBeRemoved"`
+	K8sNodesToBeRemoved  []string            `json:"k8sNodesToBeRemoved,omitempty"`
+	CleanPolicy          CleanPolicy         `json:"cleanPolicy"`
+	DeleteOption         *types.DeleteOption `json:"deleteOption,omitempty"`
+}
+
+type CreateTaskResp struct {
+	CommonResponse
+	TaskID string `json:"taskID"`
+}
+
+type GetTaskArgs struct {
+	TaskType types.TaskType
+	TaskID   string
+}
+
+type ListTasksArgs struct {
+	TaskType types.TaskType
+	TargetID string
+	PageNo   int
+	PageSize int
+}
+
+type GetTaskResp struct {
+	CommonResponse
+	Task *types.Task `json:"task"`
+}
+
+type ListTaskResp struct {
+	CommonResponse
+	Page ListTaskPage
+}
+
+type ListTaskPage struct {
+	PageNo     int           `json:"pageNo,omitempty"`
+	PageSize   int           `json:"pageSize,omitempty"`
+	TotalCount int           `json:"totalCount"`
+	Items      []*types.Task `json:"items"`
+}
+
+type UpdateInstanceCRDRequest struct {
+	Instance *InstanceCRD `json:"instance"`
+}
+
+type GetInstanceCRDResponse struct {
+	Instance  *InstanceCRD `json:"instance"`
+	RequestID string       `json:"requestID"`
+}
+
+type GetClusterCRDArgs struct {
+	ClusterID string `json:"clusterID"`
+}
+
+type GetClusterCRDResponse struct {
+	Cluster   *ClusterCRD `json:"cluster"`
+	RequestID string      `json:"requestID"`
+}
+
+type UpdateClusterCRDArgs struct {
+	Cluster *ClusterCRD `json:"cluster"`
+}
+
+type UpdateClusterCRDResponses struct {
+}
+type ListAddonArgs struct {
+	ClusterID string `json:"clusterID"`
+	Addons    string `json:"addons"`
+}
+
+type GetAddonStatusResponse struct {
+	RequestID string            `json:"requestID"`
+	Items     []types.AddOnInfo `json:"items"`
+	Code      string            `json:"code"`
+	Message   string            `json:"message"`
+}
+
+type InstallAddonArgs struct {
+	Name      string `json:"name"`
+	Version   string `json:"version,omitempty"`
+	Params    string `json:"params,omitempty"`
+	ClusterID string `json:"clusterID"`
+}
+
+// UninstallAddonArgs 组件卸载请求 Body 内容
+type UninstallAddonArgs struct {
+	Name         string `json:"name"`
+	ClusterID    string `json:"clusterID"`
+	InstanceName string `json:"instanceName,omitempty"`
+}
+
+type CommonAddonResponse struct {
+	RequestID string `json:"requestID"`
+	Code      string `json:"code,omitempty"`
+	Message   string `json:"message,omitempty"`
+}
+
+// UpgradeAddonArgs 组件升级请求 Body 内容
+type UpgradeAddonArgs struct {
+	Name              string `json:"name,omitempty"`
+	ClusterID         string `json:"clusterID"`
+	TargetVersion     string `json:"targetVersion,omitempty"`
+	AddOnInstanceName string `json:"instanceName,omitempty"`
+	Params            string `json:"params,omitempty"`
+}
+
+type UpdateAddonArgs struct {
+	Name              string `json:"name"`
+	ClusterID         string `json:"clusterID"`
+	AddOnInstanceName string `json:"instanceName,omitempty"`
+	Params            string `json:"params,omitempty"`
+}
+
+// UpdateClusterForbidDeleteResponse - 更新 ClusterForbidDelete 返回
+type UpdateClusterForbidDeleteResponse struct {
+	Success      bool `json:"success"`
+	ForbidDelete bool `json:"forbidDelete"`
+}
+
+// UpdateInstanceScaleDownProtectionArgs 修改节点缩容保护状态的请求参数
+type UpdateInstanceScaleDownProtectionArgs struct {
+	ClusterID         string   `json:"-"`
+	InstanceIDs       []string `json:"instanceIDs"`
+	ScaleDownDisabled bool     `json:"scaleDownDisabled"`
+}
+
+// UpdateInstanceScaleDownProtectionResponse 修改节点缩容保护状态的响应
+type UpdateInstanceScaleDownProtectionResponse struct {
+	RequestID       string           `json:"requestID"`
+	FailedInstances []FailedInstance `json:"failedInstances"`
+}
+
+type FailedInstance struct {
+	InstanceID string `json:"instanceID"`
+	Reason     string `json:"reason"`
+}

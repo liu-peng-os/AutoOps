@@ -6,6 +6,7 @@ import systemRoutes from './system'
 import cmdbRoutes from './cmdb'
 import k8sRoutes from './k8s'
 import configRoutes from './config'
+import integrationRoutes from './integration'
 import task from './task'
 import tools from './Tools'
 import app from './app'
@@ -49,6 +50,7 @@ const routes = [
             ...cmdbRoutes,
             ...k8sRoutes,
             ...configRoutes,
+            ...integrationRoutes,
             ...task,
             ...tools,
             ...app,

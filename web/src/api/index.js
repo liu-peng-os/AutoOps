@@ -8,6 +8,7 @@ import request from "@/utils/request"
 import systemAPI from './system'
 import cmdbAPI from './cmdb'
 import dashboardAPI from './dashboard'
+import integrationAPI from './integration'
 import * as toolAPI from './tool'
 
 export default {
@@ -31,6 +32,8 @@ export default {
     ...cmdbAPI,
     // Dashboard管理API - 扩展到根级别以兼容现有代码
     ...dashboardAPI,
+    // Integration管理API
+    ...integrationAPI,
     // 导航工具API - 扩展到根级别以兼容现有代码
     ...toolAPI,
 
@@ -38,5 +41,6 @@ export default {
     system: systemAPI,
     cmdb: cmdbAPI,
     dashboard: dashboardAPI,
+    integration: integrationAPI,
     tool: toolAPI
 }

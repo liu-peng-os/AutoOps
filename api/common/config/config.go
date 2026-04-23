@@ -14,9 +14,28 @@ type config struct {
 	Server        server        `yaml:"server"`
 	Db            db            `yaml:"db"`
 	Redis         redis         `yaml:"redis"`
+	Integrations  Integrations  `yaml:"integrations"`
 	ImageSettings imageSettings `yaml:"imageSettings"`
 	Log           log           `yaml:"log"`
 	Monitor       monitor       `yaml:"monitor"`
+}
+
+// Integrations 外部系统接入配置
+type Integrations struct {
+	Systems []ExternalSystem `yaml:"systems"`
+}
+
+// ExternalSystem 外部系统定义
+type ExternalSystem struct {
+	Key          string            `yaml:"key"`
+	DisplayName  string            `yaml:"displayName"`
+	Category     string            `yaml:"category"`
+	Provider     string            `yaml:"provider"`
+	Mode         string            `yaml:"mode"`
+	BaseURL      string            `yaml:"baseUrl"`
+	Enabled      bool              `yaml:"enabled"`
+	Capabilities []string          `yaml:"capabilities"`
+	Metadata     map[string]string `yaml:"metadata"`
 }
 
 // 监控配置

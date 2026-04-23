@@ -4,11 +4,10 @@
 package middleware
 
 import (
-	"encoding/json"
-	"fmt"
 	"dodevops-api/common/constant"
 	"dodevops-api/common/result"
 	"dodevops-api/pkg/jwt"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -77,7 +76,7 @@ func AuthMiddleware() func(c *gin.Context) {
 
 		// 常规HTTP请求鉴权 - 支持SSE的token query参数
 		authHeader := c.Request.Header.Get("Authorization")
-		
+
 		// 如果没有Authorization头，检查是否为SSE连接并从query参数获取token
 		if authHeader == "" {
 			token := c.Query("token")
@@ -88,12 +87,9 @@ func AuthMiddleware() func(c *gin.Context) {
 					c.Set(constant.ContextKeyUserObj, mc)
 					c.Next()
 					return
-				} else {
-					// 添加调试信息
-					fmt.Printf("[DEBUG] Token验证失败: %v, token长度: %d, Secret: %s\n", err, len(token), string(jwt.Secret))
 				}
 			}
-			
+
 			result.Failed(c, int(result.ApiCode.NOAUTH), result.ApiCode.GetMessage(result.ApiCode.NOAUTH))
 			c.Abort()
 			return

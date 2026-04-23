@@ -1,0 +1,5 @@
+./taskJob.go
+./taskTemplate.go
+./taskansible.go
+./taskansiblework.go
+./taskwork.go

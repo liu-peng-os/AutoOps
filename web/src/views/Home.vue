@@ -96,6 +96,64 @@ export default {
     }
   },
   methods: {
+    ensureMenuGroup(menuList, group) {
+      let target = menuList.find(item => item.menuName === group.menuName)
+      if (!target) {
+        target = {
+          id: group.id,
+          menuName: group.menuName,
+          icon: group.icon,
+          menuSvoList: []
+        }
+        menuList.push(target)
+      } else if (!Array.isArray(target.menuSvoList)) {
+        target.menuSvoList = []
+      }
+      return target
+    },
+    ensureChildMenu(group, child) {
+      const exists = group.menuSvoList.some(item => item.url === child.url)
+      if (!exists) {
+        group.menuSvoList.push(child)
+      }
+    },
+    bootstrapPlannedMenus(menuList) {
+      const domainGroup = this.ensureMenuGroup(menuList, {
+        id: 91000,
+        menuName: '域名管理',
+        icon: 'Link'
+      })
+      this.ensureChildMenu(domainGroup, {
+        id: 91001,
+        menuName: '统一入口',
+        url: 'integration/domain',
+        icon: 'Link'
+      })
+
+      const workorderGroup = this.ensureMenuGroup(menuList, {
+        id: 92000,
+        menuName: '运营工单',
+        icon: 'Tickets'
+      })
+      this.ensureChildMenu(workorderGroup, {
+        id: 92001,
+        menuName: '工单中心',
+        url: 'integration/workorder',
+        icon: 'Tickets'
+      })
+
+      const assetGroup = this.ensureMenuGroup(menuList, {
+        id: 93000,
+        menuName: '资产管理',
+        icon: 'Box'
+      })
+      this.ensureChildMenu(assetGroup, {
+        id: 93001,
+        menuName: '站点管理',
+        url: 'cmdb/site',
+        icon: 'OfficeBuilding'
+      })
+    },
     // 初始化菜单数据
     initMenuData() {
       try {
@@ -105,6 +163,7 @@ export default {
         // 确保数据是数组格式
         if (Array.isArray(menuData)) {
           this.leftMenuList = menuData;
+          this.bootstrapPlannedMenus(this.leftMenuList)
           
           // 手动添加配置管理菜单到任务中心
           const taskMenu = this.leftMenuList.find(item => item.menuName === '任务中心')
@@ -123,10 +182,12 @@ export default {
           // 如果数据存在但不是数组，尝试解析
           console.warn('菜单数据格式异常，尝试修复:', menuData);
           this.leftMenuList = [];
+          this.bootstrapPlannedMenus(this.leftMenuList)
         } else {
           // 如果没有数据，设为空数组
           console.warn('未找到菜单数据，使用空数组');
           this.leftMenuList = [];
+          this.bootstrapPlannedMenus(this.leftMenuList)
         }
 
         // 强制触发视图更新

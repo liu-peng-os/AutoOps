@@ -1,49 +1,35 @@
-# 项目启动端口
 server:
-  address: 0.0.0.0:8000  # 监听所有网络接口
-  # debug模式
+  address: 0.0.0.0:8000
   model: debug
-  # release模式
-  #model:release /true/false
   enableSwagger: true
-  # 对外访问的基础URL（飞书 OAuth 回调地址前缀，需与飞书开放平台配置一致）
   publicUrl: "http://127.0.0.1:8080/"
-# 数据库配置
+
 db:
-  dialects: mysql
+  dialects: postgres
   host: 127.0.0.1
-  port: 3306
-#  db: gin-api
+  port: 5432
   db: autoops
-  username: root
-  password: devops@2025
+  username: postgres
+  password: postgres123456
   charset: utf8
-  # 最大空闲数
+  sslMode: disable
+  migrationPath: ./migrations
+  autoMigrate: true
   maxIdle: 50
-  # 最大连接数
   maxOpen: 150
 
-# redis配置
 redis:
-#  address: 127.0.0.1:6379
   address: 127.0.0.1:6379
   password: "123456"
 
-# 图片地址和ip
 imageSettings:
-  # 本地磁盘地址
   uploadDir: ./upload/
 
-# log日志配置
 log:
   path: ./log
   name: sys
-  # 输出到控制台
   model: console
-  # 输出到文件
-  # model: file
 
-# 监控配置
 monitor:
   prometheus:
     url: "http://127.0.0.1:9090"

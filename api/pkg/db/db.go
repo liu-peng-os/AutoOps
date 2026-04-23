@@ -1,75 +1,123 @@
-// pkg/db/db.go
 package db
 
 import (
-	"fmt"
 	"dodevops-api/common/config"
+	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
+
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
 
-// 创建自定义GORM日志记录器，同时输出到控制台和文件
+// NewGormLogger creates a GORM logger that writes to both stdout and logs/app.log.
 func NewGormLogger() logger.Interface {
-	// 确保logs目录存在
 	os.MkdirAll("logs", os.ModePerm)
 
-	// 打开日志文件
 	file, err := os.OpenFile("logs/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		log.Printf("无法打开日志文件: %v", err)
+		log.Printf("unable to open GORM log file: %v", err)
 		return logger.Default.LogMode(logger.Info)
 	}
 
-	// 创建多重写入器，同时写入控制台和文件
 	mw := io.MultiWriter(os.Stdout, file)
-
 	return logger.New(
-		log.New(mw, "\r\n", log.LstdFlags), // io writer
+		log.New(mw, "\r\n", log.LstdFlags),
 		logger.Config{
-			SlowThreshold:             time.Second,   // 慢 SQL 阈值
-			LogLevel:                  logger.Info,   // 日志级别
-			IgnoreRecordNotFoundError: false,         // 忽略ErrRecordNotFound（记录未找到）错误
-			Colorful:                  true,          // 彩色打印
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Info,
+			IgnoreRecordNotFoundError: false,
+			Colorful:                  true,
 		},
 	)
 }
 
-// 数据库初始化
+// SetupDBLink initializes the primary application database connection.
 func SetupDBLink() error {
-	var err error
-	var dbConfig = config.Config.Db
-	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local&sql_mode=''",
-		dbConfig.Username,
-		dbConfig.Password,
-		dbConfig.Host,
-		dbConfig.Port,
-		dbConfig.Db,
-		dbConfig.Charset)
-	Db, err = gorm.Open(mysql.Open(url), &gorm.Config{
+	dbConfig := config.Config.Db
+
+	database, err := openGormDB(dbConfig)
+	if err != nil {
+		return err
+	}
+	if database.Error != nil {
+		return database.Error
+	}
+
+	Db = database
+
+	if err := RunMigrations(Db, dbConfig.MigrationPath); err != nil {
+		return err
+	}
+
+	// Phase 1 keeps a compatibility fallback so an empty PostgreSQL database can still boot.
+	if dbConfig.AutoMigrate {
+		if err := AutoMigrate(Db); err != nil {
+			return err
+		}
+	}
+
+	sqlDB, err := Db.DB()
+	if err != nil {
+		return err
+	}
+	sqlDB.SetMaxIdleConns(dbConfig.MaxIdle)
+	sqlDB.SetMaxOpenConns(dbConfig.MaxOpen)
+	return nil
+}
+
+func openGormDB(dbConfig config.Db) (*gorm.DB, error) {
+	var dialector gorm.Dialector
+
+	switch strings.ToLower(dbConfig.Dialects) {
+	case "", "mysql":
+		dsn := fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local&sql_mode=''",
+			dbConfig.Username,
+			dbConfig.Password,
+			dbConfig.Host,
+			dbConfig.Port,
+			dbConfig.Db,
+			dbConfig.Charset,
+		)
+		dialector = mysql.Open(dsn)
+	case "postgres", "postgresql":
+		sslMode := dbConfig.SSLMode
+		if sslMode == "" {
+			sslMode = "disable"
+		}
+		dsn := fmt.Sprintf(
+			"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Shanghai",
+			dbConfig.Host,
+			dbConfig.Port,
+			dbConfig.Username,
+			dbConfig.Password,
+			dbConfig.Db,
+			sslMode,
+		)
+		dialector = postgres.Open(dsn)
+	default:
+		return nil, fmt.Errorf("unsupported database dialect: %s", dbConfig.Dialects)
+	}
+
+	database, err := gorm.Open(dialector, &gorm.Config{
 		Logger:                                   NewGormLogger(),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if Db.Error != nil {
-		panic(Db.Error)
-	}
-
-	// 自动建表
-	if err := AutoMigrate(Db); err != nil {
-		panic(err)
+	if database == nil {
+		return nil, errors.New("gorm returned nil database instance")
 	}
 
-	sqlDB, err := Db.DB()
-	sqlDB.SetMaxIdleConns(dbConfig.MaxIdle)
-	sqlDB.SetMaxOpenConns(dbConfig.MaxOpen)
-	return nil
+	return database, nil
 }

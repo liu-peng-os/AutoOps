@@ -1,0 +1,2 @@
+-- Stage 1 baseline migration placeholder.
+-- Legacy tables are still bootstrapped by GORM auto-migrate during the transition to SQL-first migrations.

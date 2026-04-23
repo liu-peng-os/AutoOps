@@ -1,15 +1,12 @@
-// 文件配置,解析yaml配种文件
-// author xiaoRui
-
 package config
 
 import (
 	"os"
+	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
 
-// 总配文件
 type config struct {
 	Server        server        `yaml:"server"`
 	Db            db            `yaml:"db"`
@@ -20,12 +17,10 @@ type config struct {
 	Monitor       monitor       `yaml:"monitor"`
 }
 
-// Integrations 外部系统接入配置
 type Integrations struct {
 	Systems []ExternalSystem `yaml:"systems"`
 }
 
-// ExternalSystem 外部系统定义
 type ExternalSystem struct {
 	Key          string            `yaml:"key"`
 	DisplayName  string            `yaml:"displayName"`
@@ -38,62 +33,64 @@ type ExternalSystem struct {
 	Metadata     map[string]string `yaml:"metadata"`
 }
 
-// 监控配置
 type monitor struct {
 	Prometheus  prometheus  `yaml:"prometheus"`
 	Pushgateway pushgateway `yaml:"pushgateway"`
 	Agent       agent       `yaml:"agent"`
+	Webhook     webhook     `yaml:"webhook"`
 }
 
-// Pushgateway配置
 type pushgateway struct {
 	URL string `yaml:"url"`
 }
 
-// Agent配置
 type agent struct {
 	HeartbeatServerURL string `yaml:"heartbeat_server_url"`
 	HeartbeatToken     string `yaml:"heartbeat_token"`
 }
 
-// Prometheus配置
+type webhook struct {
+	Token string `yaml:"token"`
+}
+
 type prometheus struct {
 	URL string `yaml:"url"`
 }
 
-// 项目端口配置
 type server struct {
 	Address       string `yaml:"address"`
 	Model         string `yaml:"model"`
-	EnableSwagger bool   `yaml:"enableSwagger"` // 是否启用Swagger文档
+	EnableSwagger bool   `yaml:"enableSwagger"`
+	PublicUrl     string `yaml:"publicUrl"`
 }
 
-// 数据库配置
+type Db = db
+
 type db struct {
-	Dialects string `yaml:"dialects"`
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Db       string `yaml:"db"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Charset  string `yaml:"charset"`
-	MaxIdle  int    `yaml:"maxIdle"`
-	MaxOpen  int    `yaml:"maxOpen"`
+	Dialects      string `yaml:"dialects"`
+	Host          string `yaml:"host"`
+	Port          int    `yaml:"port"`
+	Db            string `yaml:"db"`
+	Username      string `yaml:"username"`
+	Password      string `yaml:"password"`
+	Charset       string `yaml:"charset"`
+	SSLMode       string `yaml:"sslMode"`
+	MigrationPath string `yaml:"migrationPath"`
+	AutoMigrate   bool   `yaml:"autoMigrate"`
+	MaxIdle       int    `yaml:"maxIdle"`
+	MaxOpen       int    `yaml:"maxOpen"`
 }
 
-// redis配置
 type redis struct {
 	Address  string `yaml:"address"`
 	Password string `yaml:"password"`
 }
 
-// imageSettings图片上传配置
 type imageSettings struct {
 	UploadDir string `yaml:"uploadDir"`
 	ImageHost string `yaml:"imageHost"`
 }
 
-// log日志配置
 type log struct {
 	Path  string `yaml:"path"`
 	Name  string `yaml:"name"`
@@ -102,15 +99,11 @@ type log struct {
 
 var Config *config
 
-// 配置初始化
-func init() {
-	// 初始化时先不加载配置文件，等待LoadConfig()被调用
-}
+func init() {}
 
-// LoadConfig 从指定路径加载配置文件
 func LoadConfig(configPath string) error {
 	if configPath == "" {
-		configPath = "./config.yaml" // 默认配置文件路径
+		configPath = "./config.yaml"
 	}
 
 	yamlFile, err := os.ReadFile(configPath)
@@ -118,16 +111,16 @@ func LoadConfig(configPath string) error {
 		return err
 	}
 
-	// 绑定值
-	err = yaml.Unmarshal(yamlFile, &Config)
-	if err != nil {
+	cfg := &config{}
+	if err := yaml.Unmarshal(yamlFile, cfg); err != nil {
 		return err
 	}
 
+	applyEnvOverrides(cfg)
+	Config = cfg
 	return nil
 }
 
-// GetConfig 获取数据库配置
 func GetConfig() *db {
 	if Config == nil {
 		panic("Config is not initialized")
@@ -135,7 +128,6 @@ func GetConfig() *db {
 	return &Config.Db
 }
 
-// GetRedisConfig 获取Redis配置
 func GetRedisConfig() *redis {
 	if Config == nil {
 		panic("Config is not initialized")
@@ -143,10 +135,76 @@ func GetRedisConfig() *redis {
 	return &Config.Redis
 }
 
-// Setup 初始化配置（为了兼容migrate.go的调用）
 func Setup() {
-	// 配置已经在init()方法中初始化了，这里只是提供一个兼容性方法
 	if Config == nil {
 		panic("Config initialization failed")
+	}
+}
+
+func applyEnvOverrides(cfg *config) {
+	if cfg == nil {
+		return
+	}
+
+	applyStringEnv("SERVER_ADDRESS", &cfg.Server.Address)
+	applyStringEnv("SERVER_MODEL", &cfg.Server.Model)
+	applyBoolEnv("SERVER_ENABLE_SWAGGER", &cfg.Server.EnableSwagger)
+	applyStringEnv("SERVER_PUBLIC_URL", &cfg.Server.PublicUrl)
+
+	applyStringEnv("DB_DIALECTS", &cfg.Db.Dialects)
+	applyStringEnv("DB_HOST", &cfg.Db.Host)
+	applyIntEnv("DB_PORT", &cfg.Db.Port)
+	applyStringEnv("DB_NAME", &cfg.Db.Db)
+	applyStringEnv("DB_USER", &cfg.Db.Username)
+	applyStringEnv("DB_PASSWORD", &cfg.Db.Password)
+	applyStringEnv("DB_CHARSET", &cfg.Db.Charset)
+	applyStringEnv("DB_SSLMODE", &cfg.Db.SSLMode)
+	applyStringEnv("DB_MIGRATION_PATH", &cfg.Db.MigrationPath)
+	applyBoolEnv("DB_AUTO_MIGRATE", &cfg.Db.AutoMigrate)
+	applyIntEnv("DB_MAX_IDLE", &cfg.Db.MaxIdle)
+	applyIntEnv("DB_MAX_OPEN", &cfg.Db.MaxOpen)
+
+	applyStringEnv("REDIS_ADDR", &cfg.Redis.Address)
+	applyStringEnv("REDIS_PASSWORD", &cfg.Redis.Password)
+
+	applyStringEnv("IMAGE_UPLOAD_DIR", &cfg.ImageSettings.UploadDir)
+	applyStringEnv("IMAGE_HOST", &cfg.ImageSettings.ImageHost)
+
+	applyStringEnv("LOG_PATH", &cfg.Log.Path)
+	applyStringEnv("LOG_NAME", &cfg.Log.Name)
+	applyStringEnv("LOG_MODEL", &cfg.Log.Model)
+
+	applyStringEnv("PROMETHEUS_URL", &cfg.Monitor.Prometheus.URL)
+	applyStringEnv("PUSHGATEWAY_URL", &cfg.Monitor.Pushgateway.URL)
+	applyStringEnv("HEARTBEAT_SERVER_URL", &cfg.Monitor.Agent.HeartbeatServerURL)
+	applyStringEnv("HEARTBEAT_TOKEN", &cfg.Monitor.Agent.HeartbeatToken)
+	applyStringEnv("WEBHOOK_TOKEN", &cfg.Monitor.Webhook.Token)
+}
+
+func applyStringEnv(key string, target *string) {
+	if value := os.Getenv(key); value != "" {
+		*target = value
+	}
+}
+
+func applyIntEnv(key string, target *int) {
+	value := os.Getenv(key)
+	if value == "" {
+		return
+	}
+
+	if parsed, err := strconv.Atoi(value); err == nil {
+		*target = parsed
+	}
+}
+
+func applyBoolEnv(key string, target *bool) {
+	value := os.Getenv(key)
+	if value == "" {
+		return
+	}
+
+	if parsed, err := strconv.ParseBool(value); err == nil {
+		*target = parsed
 	}
 }

@@ -45,7 +45,7 @@ func BuildCmdbGroupHostTree(groups []CmdbGroup, hosts []CmdbHostVo) []CmdbGroupH
 	}
 
 	// 构建树形结构
-	var tree []CmdbGroupHostDto
+	tree := make([]CmdbGroupHostDto, 0)
 	for _, group := range groups {
 		if group.ParentID == 0 {
 			tree = append(tree, buildGroupHostSubTree(groupMap[group.ID], groupMap))

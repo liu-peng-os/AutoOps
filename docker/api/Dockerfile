@@ -1,42 +1,42 @@
-FROM crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/golang:1.25-alpine
+FROM golang:1.24-alpine AS builder
+
+ARG ALPINE_REPO_BASE=https://mirrors.aliyun.com/alpine
+ARG GO_PROXY=https://mirrors.aliyun.com/goproxy/,https://goproxy.io,direct
+ARG GO_SUMDB=off
+
+RUN printf "%s\n%s\n" \
+    "${ALPINE_REPO_BASE}/v3.20/main" \
+    "${ALPINE_REPO_BASE}/v3.20/community" > /etc/apk/repositories
+
+WORKDIR /src/api
+
+ENV GOPROXY=${GO_PROXY}
+ENV GOSUMDB=${GO_SUMDB}
+
+RUN apk add --no-cache ca-certificates git tzdata build-base
+
+COPY api/ ./
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -p 1 -o /out/devops main.go
+
+FROM alpine:3.20
+
+ARG ALPINE_REPO_BASE=https://mirrors.aliyun.com/alpine
+
+RUN printf "%s\n%s\n" \
+    "${ALPINE_REPO_BASE}/v3.20/main" \
+    "${ALPINE_REPO_BASE}/v3.20/community" > /etc/apk/repositories
 
 WORKDIR /app
 
-# 设置 Alpine 国内镜像源
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --no-cache ca-certificates openssh-client tzdata curl bash && \
+    mkdir -p /app/log /app/upload /root/.ssh
 
-# 安装运行时依赖
-RUN apk --no-cache add \
-    ca-certificates \
-    openssh-client \
-    tzdata \
-    curl \
-    bash \
-    git \
-    gcc \
-    musl-dev && \
-    rm -rf /var/cache/apk/*
-
-# 设置时区
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 配置 Go 环境变量
-ENV GO111MODULE=on \
-    GOPROXY=https://goproxy.cn,direct \
-    GOPATH=/go \
-    GOCACHE=/go-cache
+COPY --from=builder /out/devops /app/devops
 
-# 创建必要的目录
-RUN mkdir -p /app/log /app/upload /app/docs /go/pkg/mod /go-cache && \
-    chmod -R 777 /go /go-cache
-
-# 复制编译好的二进制文件
-COPY devops /app/devops
-RUN chmod +x /app/devops
-
-# 暴露端口
 EXPOSE 8000
 
-# 启动命令
 CMD ["/app/devops"]

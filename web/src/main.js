@@ -17,10 +17,10 @@ import './assets/css/global.css'
 // 统一导入 el-icon 图标
 import * as ElIconModules from '@element-plus/icons-vue'
 
-// 创建 Vue 应用实例 ✅
+// 创建 Vue 应用实例
 const app = createApp(App)
 
-// 统一注册 el-icon 图标组件 ✅
+// 统一注册 el-icon 图标组件
 for (let iconName in ElIconModules) {
     app.component(iconName, ElIconModules[iconName])
 }

@@ -259,10 +259,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="addAdmin" class="modern-btn primary-btn">确 定</el-button>
-          <el-button type="info" @click="addDialogVisible = false" class="modern-btn secondary-btn">取 消</el-button>
-        </span>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button type="primary" @click="addAdmin" class="modern-btn primary-btn">确 定</el-button>
+            <el-button type="info" @click="addDialogVisible = false" class="modern-btn secondary-btn">取 消</el-button>
+          </span>
+        </template>
       </el-form>
     </el-dialog>
 
@@ -332,10 +334,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="editAdminInfo" class="modern-btn primary-btn">确 定</el-button>
-          <el-button type="info" @click="editDialogVisible = false" class="modern-btn secondary-btn">取 消</el-button>
-        </span>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button type="primary" @click="editAdminInfo" class="modern-btn primary-btn">确 定</el-button>
+            <el-button type="info" @click="editDialogVisible = false" class="modern-btn secondary-btn">取 消</el-button>
+          </span>
+        </template>
       </el-form>
     </el-dialog>
   </div>
@@ -535,7 +539,7 @@ export default {
         // 手动更新当前行状态，避免重新加载整个列表
         const index = this.adminList.findIndex(item => item.id === row.id);
         if (index > -1) {
-          this.$set(this.adminList, index, {...row}); // 强制触发 Vue 响应式更新
+          this.adminList[index] = {...row}; // Vue 3 响应式直接赋值即可
         }
       } else {
         this.$message.error(res.message);
@@ -668,7 +672,7 @@ export default {
         inputErrorMessage: "用户密码长度必须介于 5 和 20 之间"
       }).then(({value}) => {
         this.$api.resetPassword(row.id, value).then(() => { // [resetPassword](file:///Users/apple/Desktop/zhangfan/2025-06-30/gin-web/src/api/index.js#L363-L371)
-          this.$message.success("修改成功，新密码是：" + value);
+          this.$message.success("密码重置成功");
         });
       }).catch(() => {
       });

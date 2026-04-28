@@ -1341,68 +1341,68 @@ export default {
   height: 150px;
 }
 
-/deep/ .monitor-dialog {
+:deep() .monitor-dialog {
   background-color: #121212;
   border: 1px solid #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-dialog__title {
+:deep() .monitor-dialog .el-dialog__title {
   color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-dialog__header {
+:deep() .monitor-dialog .el-dialog__header {
   border-bottom: 1px solid #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-dialog__body {
+:deep() .monitor-dialog .el-dialog__body {
   background-color: #121212;
   color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-radio-button__inner {
+:deep() .monitor-dialog .el-radio-button__inner {
   background-color: #1a1a2e;
   color: #00d8ff;
   border-color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+:deep() .monitor-dialog .el-radio-button__orig-radio:checked + .el-radio-button__inner {
   background-color: #00d8ff;
   color: #121212;
   border-color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-button {
+:deep() .monitor-dialog .el-button {
   background-color: #1a1a2e;
   color: #00d8ff;
   border-color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-button:hover {
+:deep() .monitor-dialog .el-button:hover {
   background-color: #00d8ff;
   color: #121212;
 }
 
-/deep/ .monitor-dialog .el-button--primary {
+:deep() .monitor-dialog .el-button--primary {
   background-color: #00d8ff;
   color: #121212;
   border-color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-button--primary:hover {
+:deep() .monitor-dialog .el-button--primary:hover {
   background-color: #00a8d8;
   color: #121212;
 }
 
-/deep/ .monitor-dialog .el-date-editor .el-range-input {
+:deep() .monitor-dialog .el-date-editor .el-range-input {
   background-color: #1a1a2e;
   color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-date-editor .el-range-separator {
+:deep() .monitor-dialog .el-date-editor .el-range-separator {
   color: #00d8ff;
 }
 
-/deep/ .monitor-dialog .el-tag {
+:deep() .monitor-dialog .el-tag {
   background-color: #1a1a2e;
   color: #00d8ff;
   border-color: #00d8ff;

@@ -531,7 +531,7 @@ export default {
     async getAllGroups() {
       const { data: res } = await this.$api.getAllCmdbGroups()
       if (res.code === 200) {
-        this.groupList = res.data
+        this.groupList = res.data || []
         // 设置默认分组为业务组
         const businessGroup = this.groupList.find(group => group.name === '业务组')
         if (businessGroup) {

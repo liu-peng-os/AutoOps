@@ -63,7 +63,7 @@ func BuildCmdbGroupTreeWithHostCount(groups []CmdbGroup, hosts []CmdbHost) []Cmd
 		directHostCount[host.GroupID]++
 	}
 
-	var tree []CmdbGroup
+	tree := make([]CmdbGroup, 0)
 	for i := range groups {
 		if groups[i].ParentID == 0 {
 			tree = append(tree, buildSubTreeWithHostCount(groups[i], groupMap, directHostCount))

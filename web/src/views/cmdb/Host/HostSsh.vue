@@ -84,7 +84,7 @@
 import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { AttachAddon } from '@xterm/addon-attach'
-import 'xterm/css/xterm.css'
+import '@xterm/xterm/css/xterm.css'
 import storage from '@/utils/storage'
 
 export default {
@@ -289,7 +289,7 @@ export default {
       try {
         const response = await this.$api.getGroupListWithHosts()
         if (response.data.code === 200) {
-          this.groupList = response.data.data.map(group => ({
+          this.groupList = (response.data.data || []).map(group => ({
             ...group,
             children: group.children ? group.children.map(child => ({
               ...child,

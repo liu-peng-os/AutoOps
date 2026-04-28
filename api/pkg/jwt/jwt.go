@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"dodevops-api/api/system/model"
 	"dodevops-api/common/constant"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gin-gonic/gin"
 	"time"
 )
 
 type userStdClaims struct {
 	model.JwtAdmin
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // token过期时间
@@ -39,9 +39,9 @@ func GenerateTokenByAdmin(admin model.SysAdmin) (string, error) {
 	}
 	c := userStdClaims{
 		jwtAdmin,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), //过期时间
-			Issuer:    "admin",                                    //签发人
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)),
+			Issuer:    "admin",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)

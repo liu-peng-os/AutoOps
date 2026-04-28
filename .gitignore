@@ -2,3 +2,10 @@ api/devops
 .trae/
 .local/
 .gocache/
+api/tmp_main_*.log
+api/vendor/
+api/logs/
+docker/redis/data/
+docker/prometheus/data/
+docker/pushgateway/data/
+docker/api/upload/

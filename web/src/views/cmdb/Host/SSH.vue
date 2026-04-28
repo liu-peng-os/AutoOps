@@ -131,7 +131,7 @@ export default {
       try {
         const response = await this.$api.getGroupListWithHosts()
         if (response.data.code === 200) {
-          this.groupList = response.data.data.map(group => ({
+          this.groupList = (response.data.data || []).map(group => ({
             ...group,
             children: group.children ? group.children.map(child => ({
               ...child,

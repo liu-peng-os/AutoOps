@@ -15,9 +15,13 @@ ENV GOSUMDB=${GO_SUMDB}
 
 RUN apk add --no-cache ca-certificates git tzdata build-base
 
+COPY api/go.mod api/go.sum ./
+
+RUN go mod download
+
 COPY api/ ./
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -p 1 -o /out/devops main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -p 1 -o /out/devops main.go
 
 FROM alpine:3.20
 

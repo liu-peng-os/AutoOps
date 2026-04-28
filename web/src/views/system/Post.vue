@@ -860,8 +860,8 @@ export default {
       color: #ffffff;
     }
     
-    :deep() .btn-prev,
-    :deep() .btn-next {
+    :deep(.btn-prev),
+    :deep(.btn-next) {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;

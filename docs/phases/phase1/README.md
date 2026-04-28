@@ -4,7 +4,7 @@
 
 **阶段 1 已完成，正式关闭。** (2026-04-28)
 
-底座已稳定，可以进入阶段 2。
+底座已稳定，阶段 2 可以开始。
 
 ## 已完成
 
@@ -17,8 +17,8 @@
 - API 能连接外部 PostgreSQL，并确认 `goose` 当前版本为 `4`。
 - Web 和 API 冒烟检查通过。
 - Docker 运行数据、上传目录和临时日志已加入 `.gitignore`。
-- **JWT 已从 `dgrijalva/jwt-go`（有CVE）迁移到 `golang-jwt/jwt/v5`。**
-- **Docker 构建改用 vendor 模式，不再依赖构建时联网下载依赖。**
+- **JWT 已从 `dgrijalva/jwt-go`（有CVE）迁移到 `golang-jwt/jwt/v5`，依赖图中不再需要旧 JWT 包。**
+- **Docker 构建已调整为 clean checkout 可复现的 module 模式，不再依赖本地未提交的 `vendor/` 目录。**
 - **前端 CMDB 主机管理页面 null 崩溃已修复（空分组时后端返回 `[]` 而非 `null`）。**
 - **前端 Vue 2 遗留代码已清理（`this.$set`、`slot="footer"`）。**
 

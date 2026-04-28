@@ -1,0 +1,6 @@
+.git
+.gocache
+api/vendor
+api/logs
+web/node_modules
+web/dist

@@ -1,14 +1,14 @@
-// jwt工具类（生产token/解析token/获取用户信息）
 package jwt
 
 import (
-	"errors"
-	"fmt"
 	"dodevops-api/api/system/model"
 	"dodevops-api/common/constant"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/gin-gonic/gin"
+	"errors"
+	"fmt"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type userStdClaims struct {
@@ -16,19 +16,17 @@ type userStdClaims struct {
 	jwt.RegisteredClaims
 }
 
-// token过期时间
 const TokenExpireDuration = time.Hour * 24
 
-// token密钥
 var Secret = []byte("dodevops-api")
+
 var (
-	ErrAbsent  = "token absent"  // 令牌不存在
-	ErrInvalid = "token invalid" //令牌无效
+	ErrAbsent  = "token absent"
+	ErrInvalid = "token invalid"
 )
 
-// 根据用户信息生成token
 func GenerateTokenByAdmin(admin model.SysAdmin) (string, error) {
-	var jwtAdmin = model.JwtAdmin{
+	jwtAdmin := model.JwtAdmin{
 		ID:       admin.ID,
 		Username: admin.Username,
 		Nickname: admin.Nickname,
@@ -48,7 +46,6 @@ func GenerateTokenByAdmin(admin model.SysAdmin) (string, error) {
 	return token.SignedString(Secret)
 }
 
-// ValidateToken 解析JWT
 func ValidateToken(tokenString string) (*model.JwtAdmin, error) {
 	if tokenString == "" {
 		return nil, errors.New(ErrAbsent)
@@ -72,33 +69,30 @@ func ValidateToken(tokenString string) (*model.JwtAdmin, error) {
 	return &claims.JwtAdmin, err
 }
 
-// 返回id
 func GetAdminId(c *gin.Context) (uint, error) {
 	u, exist := c.Get(constant.ContextKeyUserObj)
 	if !exist {
-		return 0, errors.New("无法获取用户id")
+		return 0, errors.New("can't get admin id")
 	}
 	admin, ok := u.(*model.JwtAdmin)
 	if ok {
 		return admin.ID, nil
 	}
-	return 0, errors.New("无法转换为id结构")
+	return 0, errors.New("context user is not JwtAdmin")
 }
 
-// 返回用户名
 func GetAdminName(c *gin.Context) (string, error) {
 	u, exist := c.Get(constant.ContextKeyUserObj)
 	if !exist {
-		return string(string(0)), errors.New("无法获取用户名")
+		return "", errors.New("can't get admin name")
 	}
 	admin, ok := u.(*model.JwtAdmin)
 	if ok {
 		return admin.Username, nil
 	}
-	return string(string(0)), errors.New("无法转换为api名称")
+	return "", errors.New("context user is not JwtAdmin")
 }
 
-// 返回admin信息
 func GetAdmin(c *gin.Context) (*model.JwtAdmin, error) {
 	u, exist := c.Get(constant.ContextKeyUserObj)
 	if !exist {
@@ -108,5 +102,5 @@ func GetAdmin(c *gin.Context) (*model.JwtAdmin, error) {
 	if ok {
 		return admin, nil
 	}
-	return nil, errors.New("无法转换为api结构")
+	return nil, errors.New("context user is not JwtAdmin")
 }

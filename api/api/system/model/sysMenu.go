@@ -47,7 +47,7 @@ type LeftMenuVo struct {
 	MenuName    string    `json:"menuName"`    // 菜单名称
 	Icon        string    `json:"icon"`        // 图标
 	Url         string    `json:"url"`         // url
-	MenuSvoList []MenuSvo `json:"menuSvoList"` // 菜单列表
+	MenuSvoList []MenuSvo `json:"menuSvoList" gorm:"-"` // 菜单列表
 }
 
 // 权限vo

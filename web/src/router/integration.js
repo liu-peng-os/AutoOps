@@ -1,9 +1,7 @@
-import ExternalModuleLanding from '@/views/integration/ExternalModuleLanding.vue'
-
 const routes = [
     {
         path: '/integration/domain',
-        component: ExternalModuleLanding,
+        component: () => import('@/views/integration/ExternalModuleLanding.vue'),
         props: {
             pageKey: 'domain-management',
             title: '域名管理',
@@ -13,7 +11,7 @@ const routes = [
     },
     {
         path: '/integration/workorder',
-        component: ExternalModuleLanding,
+        component: () => import('@/views/integration/ExternalModuleLanding.vue'),
         props: {
             pageKey: 'operations-workorder',
             title: '运营工单',

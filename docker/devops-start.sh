@@ -8,13 +8,12 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 API_PORT=${4:-8000}
-DB_PORT=${5:-5432}
-REDIS_PORT=${6:-6379}
-PROMETHEUS_PORT=${7:-9090}
-PUSHGATEWAY_PORT=${8:-9091}
+REDIS_PORT=${5:-6379}
+PROMETHEUS_PORT=${6:-9090}
+PUSHGATEWAY_PORT=${7:-9091}
 
 if [ $# -lt 3 ]; then
-    echo -e "${RED}Usage: $0 <version> <host> <web_port> [api_port] [db_port] [redis_port] [prometheus_port] [pushgateway_port]${NC}"
+    echo -e "${RED}Usage: $0 <version> <host> <web_port> [api_port] [redis_port] [prometheus_port] [pushgateway_port]${NC}"
     exit 1
 fi
 
@@ -22,7 +21,7 @@ VERSION=$1
 SERVER_HOST=$2
 WEB_PORT=$3
 
-for port in "$WEB_PORT" "$API_PORT" "$DB_PORT" "$REDIS_PORT" "$PROMETHEUS_PORT" "$PUSHGATEWAY_PORT"; do
+for port in "$WEB_PORT" "$API_PORT" "$REDIS_PORT" "$PROMETHEUS_PORT" "$PUSHGATEWAY_PORT"; do
     if ! [[ "$port" =~ ^[0-9]+$ ]] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
         echo -e "${RED}Invalid port: $port${NC}"
         exit 1
@@ -48,6 +47,12 @@ if [ -z "$DOCKER_COMPOSE_CMD" ]; then
     exit 1
 fi
 
+if ! docker version >/dev/null 2>&1; then
+    echo -e "${RED}Docker Engine is not healthy or not reachable.${NC}"
+    echo "Please start or repair Docker Desktop / dockerd before running the phase1 stack."
+    exit 1
+fi
+
 if [ ! -f "docker-compose.yml" ] || [ ! -f ".env" ]; then
     echo -e "${RED}docker-compose.yml and .env must exist in $(pwd)${NC}"
     exit 1
@@ -66,18 +71,14 @@ set_env() {
 echo -e "${YELLOW}Updating docker environment...${NC}"
 set_env "WEB_PORT" "$WEB_PORT"
 set_env "API_PORT" "$API_PORT"
-set_env "DB_PORT" "$DB_PORT"
 set_env "REDIS_PORT" "$REDIS_PORT"
 set_env "PROMETHEUS_PORT" "$PROMETHEUS_PORT"
 set_env "PUSHGATEWAY_PORT" "$PUSHGATEWAY_PORT"
 set_env "DB_DIALECTS" "postgres"
-set_env "DB_HOST" "postgres"
 set_env "IMAGE_HOST" "http://${SERVER_HOST}:${WEB_PORT}"
 set_env "SERVER_PUBLIC_URL" "http://${SERVER_HOST}:${WEB_PORT}/"
 
-echo -e "${YELLOW}Updating image tags...${NC}"
-sed -i.bak "s|deviops-api:v[0-9.]*|deviops-api:${VERSION}|g" docker-compose.yml
-sed -i.bak "s|deviops-web:v[0-9.]*|deviops-web:${VERSION}|g" docker-compose.yml
+echo -e "${YELLOW}Local source builds are enabled; version ${VERSION} will be used as an operator note only.${NC}"
 
 echo -e "${YELLOW}Restarting services...${NC}"
 $DOCKER_COMPOSE_CMD down 2>/dev/null || true
@@ -85,7 +86,7 @@ $DOCKER_COMPOSE_CMD up -d
 
 sleep 10
 
-SERVICES=("devops-postgres" "devops-redis" "devops-pushgateway" "devops-prometheus" "devops-api" "devops-web")
+SERVICES=("devops-redis" "devops-pushgateway" "devops-prometheus" "devops-api" "devops-web")
 ALL_HEALTHY=true
 
 for service in "${SERVICES[@]}"; do
@@ -102,7 +103,7 @@ if [ "$ALL_HEALTHY" = true ]; then
     echo -e "${GREEN}AutoOps phase1 stack is up${NC}"
     echo "  Web:         http://${SERVER_HOST}:${WEB_PORT}"
     echo "  API:         http://${SERVER_HOST}:${API_PORT}"
-    echo "  PostgreSQL:  ${SERVER_HOST}:${DB_PORT}"
+    echo "  PostgreSQL:  external (${DB_HOST:-set in .env}:${DB_PORT:-5432})"
     echo "  Redis:       ${SERVER_HOST}:${REDIS_PORT}"
     echo "  Prometheus:  http://${SERVER_HOST}:${PROMETHEUS_PORT}"
     echo "  Pushgateway: http://${SERVER_HOST}:${PUSHGATEWAY_PORT}"

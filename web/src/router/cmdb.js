@@ -1,40 +1,32 @@
-import Host from '@/views/cmdb/cmdbHost.vue'
-import Group from '@/views/cmdb/cmdbGroup.vue'
-import Db from '@/views/cmdb/cmdbDB.vue'
-import SSH from '@/views/cmdb/Host/SSH.vue'
-import DBdetails from '@/views/cmdb/DBdetails.vue'
-import ExternalModuleLanding from '@/views/integration/ExternalModuleLanding.vue'
-
-
 const routes = [
     {
         path: '/cmdb/ecs',
-        component: Host,
+        component: () => import('@/views/cmdb/cmdbHost.vue'),
         meta: {sTitle: '资产管理', tTitle: '主机管理'}
     },
     {
         path: '/cmdb/group',
-        component: Group,
+        component: () => import('@/views/cmdb/cmdbGroup.vue'),
         meta: {sTitle: '资产管理', tTitle: '业务分组'}
     },
     {
         path: '/cmdb/db',
-        component: Db,
+        component: () => import('@/views/cmdb/cmdbDB.vue'),
         meta: {sTitle: '资产管理', tTitle: '数据管理'}
-    }, 
+    },
     {
         path: '/cmdb/ssh',
-        component: SSH,
+        component: () => import('@/views/cmdb/Host/SSH.vue'),
         meta: {sTitle: '资产管理', tTitle: '终端登录'}
     },
     {
         path: '/cmdb/dbdetails',
-        component: DBdetails,
+        component: () => import('@/views/cmdb/DBdetails.vue'),
         meta: {sTitle: '数据管理', tTitle: '数据库操作'}
     },
     {
         path: '/cmdb/site',
-        component: ExternalModuleLanding,
+        component: () => import('@/views/integration/ExternalModuleLanding.vue'),
         props: {
             pageKey: 'site-management',
             title: '站点管理',

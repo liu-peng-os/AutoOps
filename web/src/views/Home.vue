@@ -40,7 +40,6 @@
           <el-button type="text" @click="toggleCollapse" class="collapse-btn">
             <el-icon size="24"><component :is="collapseBtnClass" /></el-icon>
           </el-button>
-          <HeadImage />
         </div>
         <div class="bread-btn">
           <!-- 面包屑 -->

@@ -161,7 +161,7 @@ export default {
 
 // 输入框深色风格
 .dark-input {
-    /deep/ .el-input__inner {
+    :deep(.el-input__inner) {
         background: #ffffff !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 0 !important;
@@ -182,13 +182,13 @@ export default {
         }
     }
 
-    /deep/ .el-input {
+    :deep(.el-input) {
         background: transparent !important;
     }
 
-    /deep/ .el-input__prefix { color: rgba(148, 163, 184, 0.6); }
-    /deep/ .el-input__clear,
-    /deep/ .el-icon-view  { color: rgba(148, 163, 184, 0.5); &:hover { color: #6366f1; } }
+    :deep(.el-input__prefix) { color: rgba(148, 163, 184, 0.6); }
+    :deep(.el-input__clear),
+    :deep(.el-icon-view)  { color: rgba(148, 163, 184, 0.5); &:hover { color: #6366f1; } }
 }
 
 // 验证码行
@@ -219,7 +219,7 @@ export default {
 }
 
 // 表单间距调整
-/deep/ .el-form-item {
+:deep(.el-form-item) {
     margin-bottom: 18px;
 
     &:last-child { margin-bottom: 0; }

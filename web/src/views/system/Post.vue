@@ -835,7 +835,7 @@ export default {
 
   // 现代化开关样式
   .modern-switch {
-    /deep/ .el-switch__core {
+    :deep(.el-switch__core) {
       border-radius: 20px;
       height: 24px;
       
@@ -853,15 +853,15 @@ export default {
     display: flex;
     justify-content: center;
     
-    /deep/ .el-pagination__total,
-    /deep/ .el-pagination__jump,
-    /deep/ .el-select .el-input__inner,
-    /deep/ .el-pagination__editor.el-input__inner {
+    :deep(.el-pagination__total),
+    :deep(.el-pagination__jump),
+    :deep(.el-select) .el-input__inner,
+    :deep(.el-pagination__editor).el-input__inner {
       color: #ffffff;
     }
     
-    /deep/ .btn-prev,
-    /deep/ .btn-next {
+    :deep() .btn-prev,
+    :deep() .btn-next {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
@@ -879,7 +879,7 @@ export default {
       }
     }
     
-    /deep/ .el-pager li {
+    :deep(.el-pager) li {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
@@ -978,7 +978,7 @@ export default {
   
 
   .modern-radio-group {
-    /deep/ .el-radio {
+    :deep(.el-radio) {
       margin-right: 30px;
       
       .el-radio__label {
@@ -1026,7 +1026,7 @@ export default {
       padding: 16px;
     }
     
-    .modern-dialog /deep/ .el-dialog {
+    .modern-dialog :deep(.el-dialog) {
       width: 90% !important;
       margin: 5vh auto;
     }

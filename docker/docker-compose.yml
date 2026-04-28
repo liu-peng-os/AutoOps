@@ -1,27 +1,6 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: devops-postgres
-    restart: always
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    environment:
-      POSTGRES_DB: ${DB_NAME:-autoops}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123456}
-      TZ: ${TZ:-Asia/Shanghai}
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-    networks:
-      - devops-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-autoops}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   redis:
-    image: crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/redis:7.0-alpine
+    image: redis:7.2-alpine
     container_name: devops-redis
     restart: always
     ports:
@@ -41,10 +20,10 @@ services:
       retries: 5
 
   pushgateway:
-    image: crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/pushgateway:v1.9.0
+    image: prom/pushgateway:v1.9.0
     container_name: devops-pushgateway
     restart: always
-    user: root
+    user: "0:0"
     ports:
       - "${PUSHGATEWAY_PORT:-9091}:9091"
     environment:
@@ -60,10 +39,10 @@ services:
       retries: 5
 
   prometheus:
-    image: crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/prometheus:v2.47.0
+    image: prom/prometheus:v2.47.0
     container_name: devops-prometheus
     restart: always
-    user: root
+    user: "0:0"
     ports:
       - "${PROMETHEUS_PORT:-9090}:9090"
     environment:
@@ -84,13 +63,15 @@ services:
       pushgateway:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      test: ["CMD", "/bin/promtool", "check", "config", "/etc/prometheus/prometheus.yml"]
       interval: 10s
       timeout: 3s
       retries: 5
 
   devops-api:
-    image: crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/deviops-api:v1.0
+    build:
+      context: ..
+      dockerfile: docker/api/Dockerfile
     container_name: devops-api
     restart: always
     ports:
@@ -100,7 +81,7 @@ services:
       IMAGE_HOST: ${IMAGE_HOST:-http://localhost:8088}
       SERVER_PUBLIC_URL: ${SERVER_PUBLIC_URL:-http://localhost:8088/}
       DB_DIALECTS: ${DB_DIALECTS:-postgres}
-      DB_HOST: ${DB_HOST:-postgres}
+      DB_HOST: ${DB_HOST:-host.docker.internal}
       DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_NAME:-autoops}
       DB_USER: ${DB_USER:-postgres}
@@ -111,24 +92,26 @@ services:
       REDIS_ADDR: ${REDIS_ADDR:-redis:6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-devops@2025}
     volumes:
-      - ./api/config.yaml:/app/config.yaml
-      - ./api/migrations:/app/migrations:ro
-      - ./api/logs:/app/log
+      - ../api/config.yaml:/app/config.yaml:ro
+      - ../api/migrations:/app/migrations:ro
+      - ../api/logs:/app/log
       - ./api/upload:/app/upload
       - ./api/upload/host.xlsx:/app/upload/xlsl/host.xlsx
       - ./api/ssh_keys:/root/.ssh:ro
     networks:
       - devops-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
       prometheus:
         condition: service_healthy
 
   devops-web:
-    image: crpi-aj3vgoxp9kzh2jx4.cn-hangzhou.personal.cr.aliyuncs.com/zhangfan_k8s/deviops-web:v1.0
+    build:
+      context: ..
+      dockerfile: docker/web/Dockerfile
     container_name: devops-web
     restart: always
     ports:
@@ -143,7 +126,7 @@ services:
     depends_on:
       - devops-api
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -156,7 +139,6 @@ networks:
         - subnet: 172.20.0.0/16
 
 volumes:
-  postgres-data:
   redis-data:
   prometheus-data:
   pushgateway-data:

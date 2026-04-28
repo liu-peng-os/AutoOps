@@ -58,7 +58,7 @@ func SetupDBLink() error {
 		return err
 	}
 
-	// Phase 1 keeps a compatibility fallback so an empty PostgreSQL database can still boot.
+	// The config flag is still accepted, but phase1 schema bootstrapping is now goose-first.
 	if dbConfig.AutoMigrate {
 		if err := AutoMigrate(Db); err != nil {
 			return err
@@ -108,16 +108,56 @@ func openGormDB(dbConfig config.Db) (*gorm.DB, error) {
 		return nil, fmt.Errorf("unsupported database dialect: %s", dbConfig.Dialects)
 	}
 
-	database, err := gorm.Open(dialector, &gorm.Config{
-		Logger:                                   NewGormLogger(),
-		DisableForeignKeyConstraintWhenMigrating: true,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if database == nil {
-		return nil, errors.New("gorm returned nil database instance")
+	const maxAttempts = 3
+	const retryDelay = 2 * time.Second
+
+	var lastErr error
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		database, err := gorm.Open(dialector, &gorm.Config{
+			Logger:                                   NewGormLogger(),
+			DisableForeignKeyConstraintWhenMigrating: true,
+		})
+		if err == nil {
+			if database == nil {
+				return nil, errors.New("gorm returned nil database instance")
+			}
+			return database, nil
+		}
+
+		lastErr = err
+		if !shouldRetryDBConnect(err) || attempt == maxAttempts {
+			return nil, err
+		}
+
+		log.Printf("database connection attempt %d/%d failed: %v; retrying in %s", attempt, maxAttempts, err, retryDelay)
+		time.Sleep(retryDelay)
 	}
 
-	return database, nil
+	return nil, lastErr
+}
+
+func shouldRetryDBConnect(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	message := strings.ToLower(err.Error())
+	retryHints := []string{
+		"unexpected eof",
+		"connection reset by peer",
+		"broken pipe",
+		"i/o timeout",
+		"timeout",
+		"temporary failure",
+		"connection refused",
+		"no route to host",
+	}
+
+	for _, hint := range retryHints {
+		if strings.Contains(message, hint) {
+			return true
+		}
+	}
+
+	return false
 }

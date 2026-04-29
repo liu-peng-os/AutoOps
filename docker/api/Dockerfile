@@ -1,17 +1,12 @@
 FROM golang:1.24-alpine AS builder
 
-ARG ALPINE_REPO_BASE=https://mirrors.aliyun.com/alpine
-ARG GO_PROXY=https://mirrors.aliyun.com/goproxy/,https://goproxy.io,direct
-ARG GO_SUMDB=off
-
-RUN printf "%s\n%s\n" \
-    "${ALPINE_REPO_BASE}/v3.20/main" \
-    "${ALPINE_REPO_BASE}/v3.20/community" > /etc/apk/repositories
+ARG GOPROXY=https://proxy.golang.org,direct
+ARG GOSUMDB=sum.golang.org
 
 WORKDIR /src/api
 
-ENV GOPROXY=${GO_PROXY}
-ENV GOSUMDB=${GO_SUMDB}
+ENV GOPROXY=${GOPROXY}
+ENV GOSUMDB=${GOSUMDB}
 
 RUN apk add --no-cache ca-certificates git tzdata build-base
 
@@ -21,15 +16,9 @@ RUN go mod download
 
 COPY api/ ./
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -p 1 -o /out/devops main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=mod -p 1 -o /out/devops main.go
 
 FROM alpine:3.20
-
-ARG ALPINE_REPO_BASE=https://mirrors.aliyun.com/alpine
-
-RUN printf "%s\n%s\n" \
-    "${ALPINE_REPO_BASE}/v3.20/main" \
-    "${ALPINE_REPO_BASE}/v3.20/community" > /etc/apk/repositories
 
 WORKDIR /app
 

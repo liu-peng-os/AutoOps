@@ -103,7 +103,7 @@ if [ "$ALL_HEALTHY" = true ]; then
     echo -e "${GREEN}AutoOps phase1 stack is up${NC}"
     echo "  Web:         http://${SERVER_HOST}:${WEB_PORT}"
     echo "  API:         http://${SERVER_HOST}:${API_PORT}"
-    echo "  PostgreSQL:  external (${DB_HOST:-set in .env}:${DB_PORT:-5432})"
+    echo "  PostgreSQL:  ${SERVER_HOST}:${DB_PORT} (container: ${DB_HOST:-postgres})"
     echo "  Redis:       ${SERVER_HOST}:${REDIS_PORT}"
     echo "  Prometheus:  http://${SERVER_HOST}:${PROMETHEUS_PORT}"
     echo "  Pushgateway: http://${SERVER_HOST}:${PUSHGATEWAY_PORT}"

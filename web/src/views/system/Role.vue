@@ -554,9 +554,8 @@ export default {
 
 <style scoped>
 .role-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    background: var(--color-bg);
+  padding: 12px 16px;
   
   .main-card {
     background: rgba(255, 255, 255, 0.95);
@@ -839,7 +838,7 @@ export default {
 }
 
 :deep(.modern-pagination .el-pager li.is-active) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
   color: white;
   border-color: #667eea;
 }
@@ -860,7 +859,7 @@ export default {
 }
 
 :deep(.modern-dialog .el-dialog__header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
   padding: 20px;
   margin: 0;
 }
@@ -991,7 +990,7 @@ export default {
 }
 
 .confirm-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
   color: white;
 }
 

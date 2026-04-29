@@ -698,8 +698,7 @@ defineExpose({
 <style scoped>
 .nodes-monitoring {
   padding: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  background: var(--color-bg);
   padding: 20px;
   border-radius: 16px;
 }
@@ -967,7 +966,7 @@ defineExpose({
 }
 
 .pods-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
 }
 
 .time-icon {
@@ -1273,7 +1272,7 @@ defineExpose({
 .pod-icon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
   border-radius: 8px;
   display: flex;
   align-items: center;

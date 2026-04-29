@@ -355,7 +355,7 @@ DELETE FROM \`表名\` WHERE \`id\` IN (1, 2, 3, 4, 5);`)
 
 <style scoped>
 .db-details-container {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .card-header {

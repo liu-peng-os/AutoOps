@@ -816,8 +816,7 @@ onMounted(() => {
 <style scoped>
 .k8s-cluster-details {
   padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-bg);
   position: relative;
 }
 
@@ -949,7 +948,7 @@ onMounted(() => {
 }
 
 .nodes-card .card-icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .workloads-card .card-icon {

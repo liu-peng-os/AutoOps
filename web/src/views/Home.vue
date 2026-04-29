@@ -246,10 +246,9 @@ export default {
   height: 100%;
 
   .el-aside {
-    background: linear-gradient(135deg, #1e2a5a 0%, #1a1d4d 100%);
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, var(--color-sidebar-bg) 0%, var(--color-sidebar-deep) 100%);
+    border-right: 1px solid var(--color-sidebar-hover);
+    box-shadow: 2px 0 10px oklch(0% 0 0 / 0.08);
 
     .logo {
       margin-top: 8px;
@@ -257,9 +256,9 @@ export default {
       align-items: center;
       font-size: 14px;
       height: 50px;
-      color: rgba(255, 255, 255, 0.95);
+      color: var(--color-sidebar-text);
       font-weight: 500;
-      padding: 8px 12px;
+      padding: 8px 14px;
       white-space: nowrap;
       overflow: hidden;
 
@@ -274,210 +273,124 @@ export default {
       h2 {
         margin: 0;
         font-weight: 700;
-        font-style: italic;
-        font-family: 'Arial', 'Helvetica', sans-serif;
-        letter-spacing: 1.2px;
-        font-size: 20px;
-        background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        letter-spacing: 0.5px;
+        font-size: 17px;
+        color: var(--color-sidebar-text);
         flex-shrink: 0;
         min-width: 0;
-        transform: skewX(-8deg);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
     }
 
     .modern-menu {
       border-right: none;
       background: transparent !important;
-      
-      // 全局移除Element Plus菜单的focus效果
-      * {
-        outline: none !important;
-        
-        &:focus {
-          outline: none !important;
-          box-shadow: none !important;
-        }
-        
-        &:focus-visible {
-          outline: none !important;
-          box-shadow: none !important;
-        }
-      }
     }
   }
+
   .modern-menu {
-    // 通用菜单项样式
     .el-menu-item {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 8px;
-      margin: 4px 8px;
-      color: rgba(255, 255, 255, 0.9) !important;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+      border-radius: var(--radius-md);
+      margin: 2px 8px;
+      color: var(--color-sidebar-text) !important;
       outline: none !important;
-      border: none !important;
-      
+
       &:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        transform: translateX(4px);
-        color: #ffffff !important;
-        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+        background: var(--color-sidebar-hover) !important;
+        color: oklch(100% 0 0) !important;
       }
-      
-      &:focus {
-        outline: none !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-    }
-    
-    // 一级菜单：没有子菜单的项激活样式
-    > .el-menu-item.is-active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-      color: #ffffff !important;
-      border-radius: 10px;
-      margin: 4px 8px;
-      width: calc(100% - 16px);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      
-      &:hover {
-        background: linear-gradient(135deg, #7c8ef8 0%, #8a5cb8 100%) !important;
-        transform: translateX(2px) translateY(-1px);
-        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+
+      &:focus-visible {
+        outline: 2px solid var(--color-accent-muted) !important;
+        outline-offset: -2px;
       }
     }
 
-    // 子菜单样式
+    > .el-menu-item.is-active {
+      background: linear-gradient(135deg, var(--color-sidebar-active-from) 0%, var(--color-sidebar-active-to) 100%) !important;
+      color: oklch(100% 0 0) !important;
+      box-shadow: 0 2px 8px oklch(58% 0.18 265 / 0.35);
+    }
+
     .el-sub-menu {
       .el-sub-menu__title {
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        margin: 4px 8px;
-        color: rgba(255, 255, 255, 0.9) !important;
+        transition: background var(--duration-fast) var(--ease-out);
+        border-radius: var(--radius-md);
+        margin: 2px 8px;
+        color: var(--color-sidebar-text) !important;
         outline: none !important;
-        border: none !important;
-        
+
         &:hover {
-          background: rgba(255, 255, 255, 0.15) !important;
-          transform: translateX(4px);
-          color: #ffffff !important;
-          box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-        }
-        
-        &:focus {
-          outline: none !important;
-          border: none !important;
-          box-shadow: none !important;
+          background: var(--color-sidebar-hover) !important;
+          color: oklch(100% 0 0) !important;
         }
       }
-      
-      // 二级菜单项激活样式
-      .el-menu-item {
-        outline: none !important;
-        border: none !important;
-        
-        &:focus {
-          outline: none !important;
-          border: none !important;
-          box-shadow: none !important;
-        }
-        
-        &.is-active {
-          background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
-          color: #ffffff !important;
-          border-radius: 8px;
-          margin: 2px 12px 2px 20px;
-          width: calc(100% - 32px);
-          backdrop-filter: blur(8px);
-          box-shadow: 0 3px 15px rgba(102, 126, 234, 0.3);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          outline: none !important;
-          
-          &:hover {
-            background: linear-gradient(135deg, #6b73e0 0%, #7c3aed 100%) !important;
-            transform: translateX(2px);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-          }
-          
-          &:focus {
-            outline: none !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            box-shadow: 0 3px 15px rgba(102, 126, 234, 0.3) !important;
-          }
-        }
+
+      .el-menu-item.is-active {
+        background: oklch(58% 0.18 265 / 0.85) !important;
+        color: oklch(100% 0 0) !important;
+        border-radius: var(--radius-md);
+        margin: 2px 12px 2px 20px;
+        width: calc(100% - 32px);
+        box-shadow: 0 2px 6px oklch(58% 0.18 265 / 0.25);
       }
     }
 
-    // 有子菜单的一级菜单（不应用激活样式）
     > .el-sub-menu.is-active,
     > .el-sub-menu.is-opened {
       background-color: transparent !important;
-      
+
       .el-sub-menu__title {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border-radius: 8px;
-        
-        &:hover {
-          background: rgba(255, 255, 255, 0.1) !important;
-        }
+        background: oklch(100% 0 0 / 0.05) !important;
+        border-radius: var(--radius-md);
       }
     }
   }
 
-
-
-
   .el-header {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 252, 0.95) 100%);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: var(--color-header-bg);
+    border-bottom: 1px solid var(--color-header-border);
+    box-shadow: var(--shadow-xs);
     align-items: center;
     justify-content: space-between;
     display: flex;
 
     .fold-btn {
-      padding-top: 2px;
       font-size: 23px;
       cursor: pointer;
-      
+
       .collapse-btn {
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        color: #667eea;
-        
+        padding: 6px;
+        border-radius: var(--radius-md);
+        transition: background var(--duration-fast) var(--ease-out);
+        color: var(--color-accent);
+
         &:hover {
-          background: rgba(102, 126, 234, 0.1);
-          transform: translateY(-1px);
-          color: #5a67d8;
+          background: var(--color-accent-subtle);
         }
       }
     }
 
     .bread-btn {
-      padding-top: 2px;
       position: fixed;
       margin-left: 40px;
-      
+
       .el-breadcrumb {
         .el-breadcrumb__item {
           .el-breadcrumb__inner {
-            color: #667eea;
+            color: var(--color-accent);
             font-weight: 500;
-            transition: all 0.3s ease;
-            
+            transition: color var(--duration-fast) var(--ease-out);
+
             &:hover {
-              color: #5a67d8;
+              color: var(--color-accent-hover);
             }
           }
-          
+
           &:last-child .el-breadcrumb__inner {
-            color: #4a5568;
+            color: var(--color-text-secondary);
           }
         }
       }
@@ -485,193 +398,37 @@ export default {
   }
 
   .el-main {
-    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    background: var(--color-bg);
   }
 }
-
-// 全局覆盖Element Plus菜单的focus样式
-:deep(.el-menu) {
-  * {
-    outline: none !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  
-  .el-menu-item,
-  .el-sub-menu__title {
-    outline: none !important;
-    border: none !important;
-    
-    &:focus,
-    &:active,
-    &:focus-within,
-    &:focus-visible {
-      outline: none !important;
-      border: none !important;
-      background-color: transparent !important;
-      box-shadow: none !important;
-    }
-    
-    &::before,
-    &::after {
-      display: none !important;
-    }
-  }
-  
-  // 特别处理菜单项的所有状态
-  .el-menu-item {
-    &,
-    &:hover,
-    &:focus,
-    &:active,
-    &.is-active {
-      outline: none !important;
-      border: none !important;
-      
-      &::before,
-      &::after {
-        display: none !important;
-      }
-    }
-  }
-  
-  .el-sub-menu__title {
-    &,
-    &:hover,
-    &:focus,
-    &:active {
-      outline: none !important;
-      border: none !important;
-      
-      &::before,
-      &::after {
-        display: none !important;
-      }
-    }
-  }
-}
-
-// 终极解决方案 - 彻底移除白色边框闪烁
-.el-aside {
-  // 全局移除所有outline和border
-  * {
-    outline: 0 !important;
-    outline: none !important;
-    outline-width: 0 !important;
-    outline-style: none !important;
-    outline-color: transparent !important;
-    border: 0 !important;
-    border: none !important;
-    border-width: 0 !important;
-    border-style: none !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    
-    &:focus,
-    &:active,
-    &:hover,
-    &:focus-visible,
-    &:focus-within,
-    &:target {
-      outline: 0 !important;
-      outline: none !important;
-      outline-width: 0 !important;
-      outline-style: none !important;
-      outline-color: transparent !important;
-      border: 0 !important;
-      border: none !important;
-      border-width: 0 !important;
-      border-style: none !important;
-      border-color: transparent !important;
-      box-shadow: none !important;
-    }
-  }
-}
-
-// 针对Element Plus菜单的特殊处理
-:deep(.el-menu) {
-  outline: none !important;
-  border: none !important;
-
-  * {
-    outline: none !important;
-    border: none !important;
-    outline-width: 0 !important;
-    border-width: 0 !important;
-  }
-
-  .el-menu-item,
-  .el-sub-menu,
-  .el-sub-menu__title {
-    outline: none !important;
-    border: none !important;
-    outline-width: 0 !important;
-    border-width: 0 !important;
-
-    &,
-    &:before,
-    &:after,
-    &:focus,
-    &:active,
-    &:hover,
-    &:focus-visible,
-    &:focus-within,
-    &.is-active,
-    &.is-opened {
-      outline: none !important;
-      border: none !important;
-      outline-width: 0 !important;
-      border-width: 0 !important;
-      outline-style: none !important;
-      border-style: none !important;
-      outline-color: transparent !important;
-      border-color: transparent !important;
-      box-shadow: none !important;
-    }
-  }
-}
-
-// 折叠菜单弹出层样式修复 - 全局样式
 </style>
 
 <style lang="less">
-// 只修复左侧菜单栏的折叠弹出层，不影响其他tooltip等弹出层
 .el-menu--popup-bottom-start,
 .el-menu--popup {
-  background: linear-gradient(135deg, #1e2a5a 0%, #1a1d4d 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(10px) !important;
-  border-radius: 8px !important;
+  background: linear-gradient(160deg, var(--color-sidebar-bg) 0%, var(--color-sidebar-deep) 100%) !important;
+  border: 1px solid oklch(100% 0 0 / 0.08) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: var(--radius-lg) !important;
 
   .el-menu-item {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--color-sidebar-text) !important;
     background: transparent !important;
-    transition: all 0.3s ease !important;
-    margin: 2px 8px !important;
-    border-radius: 6px !important;
-    padding: 8px 12px !important;
+    transition: background var(--duration-fast) !important;
+    margin: 2px 6px !important;
+    border-radius: var(--radius-md) !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15) !important;
-      color: #ffffff !important;
-      transform: translateX(2px) !important;
+      background: oklch(100% 0 0 / 0.10) !important;
+      color: oklch(100% 0 0) !important;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-      color: #ffffff !important;
-      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-
-      &:hover {
-        background: linear-gradient(135deg, #7c8ef8 0%, #8a5cb8 100%) !important;
-      }
+      background: linear-gradient(135deg, var(--color-sidebar-active-from) 0%, var(--color-sidebar-active-to) 100%) !important;
+      color: oklch(100% 0 0) !important;
     }
 
-    // 确保图标和文字都是白色
-    .el-icon,
-    span {
+    .el-icon, span {
       color: inherit !important;
     }
   }

@@ -179,7 +179,7 @@ const formatTimestamp = (timestamp) => {
 
 <style scoped>
 .loading-container {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .empty-events {
@@ -222,7 +222,7 @@ const formatTimestamp = (timestamp) => {
 }
 
 .pod-events-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

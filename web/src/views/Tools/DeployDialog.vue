@@ -262,7 +262,7 @@ const handleProgressClose = () => {
 }
 
 :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: #fff;
   padding: 20px;
   border-radius: 12px 12px 0 0;

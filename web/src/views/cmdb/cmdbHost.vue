@@ -1529,9 +1529,8 @@ export default {
 /* 🎨 现代化科技感设计风格 - 仿照cmdbDB.vue */
 
 .cmdb-host-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .host-card {
@@ -1671,7 +1670,7 @@ export default {
 
 /* 🖥️ 终端按钮渐变蓝色样式 */
 .terminal-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: var(--color-bg);
   border: none !important;
   color: white !important;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);

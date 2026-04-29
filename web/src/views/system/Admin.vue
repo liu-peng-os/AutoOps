@@ -720,9 +720,8 @@ export default {
 <style scoped>
 /* 主容器 - 渐变背景 */
 .modern-admin-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    background: var(--color-bg);
+  padding: 12px 16px;
   position: relative;
 }
 
@@ -971,7 +970,7 @@ export default {
 }
 
 .modern-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .modern-table :deep(.el-table__header th) {
@@ -1102,7 +1101,7 @@ export default {
 }
 
 .modern-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
   border-radius: 16px 16px 0 0;
   padding: 16px 20px;
 }

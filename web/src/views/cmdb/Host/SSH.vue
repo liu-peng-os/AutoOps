@@ -286,7 +286,7 @@ export default {
 <style scoped>
 .ssh-container {
   height: calc(100vh - 120px);
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .ssh-layout {
@@ -363,7 +363,7 @@ export default {
 
 /* 终端内容样式 */
 .terminal-content {
-  padding: 20px;
+  padding: 12px 16px;
   background-color: #2a3f54;
   color: #00ff88;
   font-family: 'Courier New', monospace;

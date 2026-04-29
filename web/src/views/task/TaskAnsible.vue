@@ -1354,9 +1354,8 @@ onMounted(() => {
 
 <style scoped>
 .taskansible-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .taskansible-card {
@@ -1377,9 +1376,7 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 .search-section {
@@ -1464,7 +1461,7 @@ onMounted(() => {
 }
 
 :deep(.el-button--primary) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   border: none;
   border-radius: 8px;
   font-weight: 500;
@@ -1562,7 +1559,7 @@ onMounted(() => {
 }
 
 :deep(.el-pager li.is-active) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
 }
 

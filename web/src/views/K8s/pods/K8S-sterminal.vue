@@ -485,7 +485,7 @@ onUnmounted(() => {
 <style scoped>
 .terminal-container {
   height: 100vh;
-  padding: 20px;
+  padding: 12px 16px;
   background: #f5f5f5;
 }
 

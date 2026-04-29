@@ -1,12 +1,24 @@
 <template>
-  <!-- 标签组件 -->
-  <div class="tags">
-    <el-tag class="tag" size="medium" :effect="item.title == $route.meta.tTitle ? 'dark' : 'plain'"
-            v-for="(item, index) in tags" :key="item.path" @click="goTo(item.path)" @close="close(index)"
-            :closable="index > 0">
-            <i class="circular" v-show="item.title == $route.meta.tTitle"></i>
-            {{item.title}}
-    </el-tag>
+  <div class="tags-bar">
+    <div
+      v-for="(item, index) in tags"
+      :key="item.path"
+      :class="['tag-item', { 'is-active': item.title === $route.meta.tTitle }]"
+      @click="goTo(item.path)"
+    >
+      <span class="tag-dot" v-show="item.title === $route.meta.tTitle"></span>
+      <span class="tag-label">{{ item.title }}</span>
+      <button
+        v-if="index > 0"
+        class="tag-close"
+        @click.stop="close(index)"
+        aria-label="关闭"
+      >
+        <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10">
+          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -26,54 +38,110 @@ export default {
         path: "/dashboard",
         title: "仪表盘",
       }]
-      }
-        },
-    watch: {
-      $route: {
-        immediate: true,
-        handler(val) {
-          const boolean = this.tags.find(item => {
-            return val.path == item.path
+    }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(val) {
+        const exists = this.tags.find(item => val.path === item.path)
+        if (!exists) {
+          this.tags.push({
+            title: val.meta.tTitle,
+            path: val.path
           })
-          if (!boolean) {
-            this.tags.push({
-              title: val.meta.tTitle,
-              path: val.path
-            })
-          }
         }
       }
-    },
+    }
+  },
   methods: {
-    // 路由跳转到指定位置
     goTo(path) {
       this.$router.push(path)
     },
-    // 点击关闭标签
     close(i) {
       this.tags.splice(i, 1)
     }
-
   }
 }
 </script>
 
-<style>
-.tags {
-    padding-left: 20px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+<style scoped>
+.tags-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 16px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-.tag {
+
+.tags-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
-  margin-right: 3px;
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+  user-select: none;
 }
-.circular {
-  width: 8px;
-  height: 8px;
-  margin-right: 4px;
-  background-color: #fff;
+
+.tag-item:hover {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-color: var(--color-accent-muted);
+}
+
+.tag-item.is-active {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-color: var(--color-accent-muted);
+  font-weight: 500;
+}
+
+.tag-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  display: inline-block;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.tag-label {
+  line-height: 1;
+}
+
+.tag-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 2px;
+  padding: 0;
+  transition: background var(--duration-fast), color var(--duration-fast);
+  flex-shrink: 0;
+}
+
+.tag-close:hover {
+  background: var(--color-accent-muted);
+  color: var(--color-accent);
 }
 </style>

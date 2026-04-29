@@ -217,7 +217,7 @@ defineExpose({
 }
 
 .create-namespace-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -253,10 +253,7 @@ defineExpose({
 }
 
 .create-namespace-dialog :deep(.el-divider__text) {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
   font-weight: 600;
 }
 

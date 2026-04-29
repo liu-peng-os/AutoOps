@@ -1246,9 +1246,8 @@ export { getProgressColor }
 
 <style scoped>
 .k8s-namespace-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .namespace-card {
@@ -1269,10 +1268,7 @@ export { getProgressColor }
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
 }
 
 .header-actions {
@@ -1315,7 +1311,7 @@ export { getProgressColor }
 .limit-range-dialog :deep(.el-dialog__header),
 .create-quota-dialog :deep(.el-dialog__header),
 .create-limit-range-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -1538,10 +1534,7 @@ export { getProgressColor }
 }
 
 .create-namespace-dialog :deep(.el-divider__text) {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
   font-weight: 600;
 }
 

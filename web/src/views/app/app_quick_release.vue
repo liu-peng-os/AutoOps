@@ -1181,9 +1181,8 @@ onMounted(() => {
 
 <style scoped>
 .quick-release-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .glass-card {
@@ -1208,9 +1207,7 @@ onMounted(() => {
   font-size: 24px;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 .search-section {
@@ -1248,7 +1245,7 @@ onMounted(() => {
 }
 
 .modern-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .modern-table :deep(.el-table__header th) {
@@ -1487,7 +1484,7 @@ onMounted(() => {
 }
 
 .modern-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   padding: 20px 24px;
 }

@@ -1497,9 +1497,8 @@ onMounted(() => {
 
 <style scoped>
 .application-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 /* 主卡片样式 */
@@ -1673,7 +1672,7 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 12px 16px;
   background: rgba(248, 249, 250, 0.8);
   border-radius: 0 0 12px 12px;
 }
@@ -1686,7 +1685,7 @@ onMounted(() => {
 }
 
 .compact-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

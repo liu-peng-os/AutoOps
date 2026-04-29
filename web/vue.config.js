@@ -5,7 +5,7 @@ const { defineConfig } = require('@vue/cli-service')
 const webpack = require('webpack')
 
 // 后端服务地址，优先使用环境变量 VUE_APP_API_TARGET
-const apiTarget = process.env.VUE_APP_API_TARGET || 'http://192.168.1.156:5700'
+const apiTarget = process.env.VUE_APP_API_TARGET || 'http://127.0.0.1:8000'
 
 module.exports = defineConfig({
   lintOnSave: false,   // 关闭校验

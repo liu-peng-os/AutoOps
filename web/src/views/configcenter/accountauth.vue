@@ -395,9 +395,8 @@ export default {
 
 <style scoped>
 .accountauth-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .accountauth-card {
@@ -418,9 +417,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 .search-section {
@@ -462,7 +459,7 @@ export default {
 }
 
 .accountauth-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .accountauth-table :deep(.el-table__header th) {

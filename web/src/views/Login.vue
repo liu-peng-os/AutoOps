@@ -118,80 +118,79 @@ export default {
     align-items: center;
     justify-content: center;
     background: url('../assets/image/背景.jpg') center / cover no-repeat;
-    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
 }
 
-// 卡片
 .login-card {
     position: relative;
     z-index: 1;
-    width: 400px;
-    padding: 40px 36px 32px;
-    background: rgba(10, 14, 30, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    width: 380px;
+    padding: 36px 32px 28px;
+    background: oklch(14% 0.04 265);
+    border: 1px solid oklch(100% 0 0 / 0.08);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 48px oklch(0% 0 0 / 0.55);
     text-align: center;
 }
 
-// 标题行
 .card-header {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 28px;
 }
 
 .card-title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
-    color: #f1f5f9;
+    color: oklch(94% 0.01 265);
     margin: 0;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .card-subtitle {
-    font-size: 22px;
-    font-weight: 700;
-    color: #f1f5f9;
-    letter-spacing: 1px;
+    font-size: 14px;
+    font-weight: 400;
+    color: oklch(62% 0.02 265);
+    letter-spacing: 0;
 }
 
-// 输入框深色风格
 .dark-input {
+    :deep(.el-input__wrapper) {
+        background: oklch(20% 0.04 265) !important;
+        border: 1px solid oklch(100% 0 0 / 0.10) !important;
+        border-radius: var(--radius-md) !important;
+        box-shadow: none !important;
+        transition: border-color var(--duration-fast) var(--ease-out) !important;
+
+        &:hover {
+            border-color: oklch(100% 0 0 / 0.18) !important;
+        }
+
+        &.is-focus {
+            border-color: var(--color-accent) !important;
+            box-shadow: 0 0 0 2px oklch(58% 0.18 265 / 0.20) !important;
+        }
+    }
+
     :deep(.el-input__inner) {
-        background: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 0 !important;
-        color: #1a1a1a !important;
+        color: oklch(90% 0.01 265) !important;
         font-size: 14px !important;
-        height: 44px !important;
-        line-height: 44px !important;
-        padding: 0 10px !important;
-        transition: border-color 0.25s, box-shadow 0.25s !important;
+        height: 40px !important;
+        line-height: 40px !important;
 
         &::placeholder {
-            color: #aaaaaa !important;
-        }
-
-        &:focus {
-            border-color: #6366f1 !important;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+            color: oklch(50% 0.02 265) !important;
         }
     }
 
-    :deep(.el-input) {
-        background: transparent !important;
+    :deep(.el-input__prefix-inner),
+    :deep(.el-input__suffix-inner) {
+        color: oklch(50% 0.02 265);
     }
-
-    :deep(.el-input__prefix) { color: rgba(148, 163, 184, 0.6); }
-    :deep(.el-input__clear),
-    :deep(.el-icon-view)  { color: rgba(148, 163, 184, 0.5); &:hover { color: #6366f1; } }
 }
 
-// 验证码行
 .captcha-row {
     display: flex;
     gap: 10px;
@@ -201,15 +200,15 @@ export default {
 
 .captcha-box {
     flex-shrink: 0;
-    width: 110px;
-    height: 44px;
-    border-radius: 8px;
+    width: 108px;
+    height: 40px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    transition: border-color 0.25s;
+    border: 1px solid oklch(100% 0 0 / 0.10);
+    transition: border-color var(--duration-fast) var(--ease-out);
 
-    &:hover { border-color: #6366f1; }
+    &:hover { border-color: var(--color-accent); }
 }
 
 .captcha-img {
@@ -218,57 +217,56 @@ export default {
     display: block;
 }
 
-// 表单间距调整
 :deep(.el-form-item) {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 
     &:last-child { margin-bottom: 0; }
 
     .el-form-item__error {
         font-size: 11px;
-        color: #f87171;
+        color: oklch(65% 0.18 25);
         padding-top: 3px;
     }
 }
 
-// 登录按钮
 .login-btn {
-    width: calc(100% - 100px);
-    height: 44px;
+    width: calc(100% - 96px);
+    height: 40px;
     border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-    color: #fff !important;
-    font-size: 15px !important;
+    border-radius: var(--radius-md);
+    background: var(--color-accent) !important;
+    color: oklch(100% 0 0) !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
     letter-spacing: 2px;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
-    transition: all 0.25s !important;
+    box-shadow: 0 2px 8px oklch(58% 0.18 265 / 0.30) !important;
+    transition: background var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out) !important;
 
     &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5) !important;
+        background: var(--color-accent-hover) !important;
+        box-shadow: 0 4px 16px oklch(58% 0.18 265 / 0.45) !important;
     }
-    &:active { transform: translateY(0); }
 }
 
-// 重置按钮
 .reset-btn {
-    width: 86px;
-    height: 44px;
+    width: 82px;
+    height: 40px;
     margin-left: 10px !important;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: var(--radius-md);
+    border: 1px solid oklch(100% 0 0 / 0.10) !important;
     background: transparent !important;
-    color: rgba(148, 163, 184, 0.8) !important;
+    color: oklch(60% 0.02 265) !important;
     font-size: 14px !important;
-    letter-spacing: 1px;
-    transition: all 0.25s !important;
+    letter-spacing: 0.5px;
+    transition: border-color var(--duration-fast),
+                color var(--duration-fast),
+                background var(--duration-fast) !important;
 
     &:hover {
-        border-color: rgba(255, 255, 255, 0.25) !important;
-        color: #e2e8f0 !important;
-        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: oklch(100% 0 0 / 0.20) !important;
+        color: oklch(80% 0.01 265) !important;
+        background: oklch(100% 0 0 / 0.05) !important;
     }
 }
 </style>

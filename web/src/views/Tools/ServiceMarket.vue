@@ -190,7 +190,7 @@ onMounted(() => {
 .service-market {
   padding: 20px;
   height: 80vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
 }
 
 .market-card {
@@ -214,9 +214,7 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 .category-filter {

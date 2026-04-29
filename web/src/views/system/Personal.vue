@@ -211,9 +211,8 @@ export default {
 
 <style scoped>
 .personal-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .profile-card,

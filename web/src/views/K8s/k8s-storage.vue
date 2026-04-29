@@ -1316,9 +1316,8 @@ onMounted(async () => {
 
 <style scoped>
 .k8s-storage-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .storage-card {
@@ -1505,7 +1504,7 @@ onMounted(async () => {
 }
 
 .detail-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

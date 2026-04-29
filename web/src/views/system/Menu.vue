@@ -637,9 +637,8 @@ export default {
 
 <style lang="less" scoped>
 .modern-menu-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    background: var(--color-bg);
+  padding: 12px 16px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   
   .main-card {
@@ -965,7 +964,7 @@ export default {
     }
     
     th {
-      background: linear-gradient(135deg, #667eea, #764ba2) !important;
+      background: var(--color-bg);
       border-bottom: none;
       color: #2c3e50 !important;
       font-weight: 700 !important;

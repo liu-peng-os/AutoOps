@@ -9,7 +9,7 @@ import ServiceMarket from './ServiceMarket.vue'
 </script>
 <style scoped>
 .tools-container {
-  padding: 20px;
+  padding: 12px 16px;
   height: calc(100vh - 120px);
 }
 </style>

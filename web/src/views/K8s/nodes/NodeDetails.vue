@@ -752,9 +752,8 @@ onMounted(() => {
 
 <style scoped>
 .node-details-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    background: var(--color-bg);
+  padding: 12px 16px;
   position: relative;
 }
 
@@ -857,7 +856,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 20px;
+  padding: 12px 16px;
   position: relative;
   z-index: 2;
 }
@@ -888,7 +887,7 @@ onMounted(() => {
 }
 
 .status-icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .cpu-icon {
@@ -1097,7 +1096,7 @@ onMounted(() => {
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   transition: width 0.3s ease;
 }
 
@@ -1265,7 +1264,7 @@ onMounted(() => {
 }
 
 .card-content {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .info-row {

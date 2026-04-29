@@ -2139,9 +2139,8 @@ onMounted(async () => {
 
 <style scoped>
 .k8s-network-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .network-card {
@@ -2456,7 +2455,7 @@ onMounted(async () => {
 }
 
 .detail-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -2469,7 +2468,7 @@ onMounted(async () => {
 }
 
 .detail-content {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 /* YAML 对话框样式 */
@@ -2480,7 +2479,7 @@ onMounted(async () => {
 }
 
 .yaml-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -2493,7 +2492,7 @@ onMounted(async () => {
 }
 
 .yaml-content {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .yaml-content .el-textarea :deep(.el-textarea__inner) {
@@ -2512,7 +2511,7 @@ onMounted(async () => {
 }
 
 .events-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -2525,7 +2524,7 @@ onMounted(async () => {
 }
 
 .events-content {
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 /* 对话框样式 */
@@ -2538,7 +2537,7 @@ onMounted(async () => {
 
 .create-dialog :deep(.el-dialog__header),
 .edit-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -2824,7 +2823,7 @@ onMounted(async () => {
 }
 
 .test-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -2837,7 +2836,7 @@ onMounted(async () => {
 }
 
 .test-content {
-  padding: 20px;
+  padding: 12px 16px;
   max-height: 70vh;
   overflow-y: auto;
 }

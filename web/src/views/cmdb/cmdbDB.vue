@@ -550,9 +550,8 @@ export default {
 /* 🎨 现代化科技感设计风格 - 仿照k8s-cplony.vue */
 
 .cmdb-db-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .db-card {
@@ -573,9 +572,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 /* 🔍 搜索区域样式 */
@@ -615,7 +612,7 @@ export default {
 }
 
 .db-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .db-table :deep(.el-table__header th) {

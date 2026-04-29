@@ -136,7 +136,7 @@ defineExpose({
 <style scoped>
 .flow-container {
   min-height: 400px;
-  padding: 20px;
+  padding: 12px 16px;
   background: #e8e8e8;
   border-radius: 6px;
 }

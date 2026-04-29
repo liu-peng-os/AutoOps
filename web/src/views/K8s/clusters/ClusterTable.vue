@@ -527,7 +527,7 @@ onMounted(() => {
 }
 
 .cluster-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .cluster-table :deep(.el-table__header th) {

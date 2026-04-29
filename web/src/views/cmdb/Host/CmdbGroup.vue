@@ -548,7 +548,7 @@ export default {
   font-size: 18px;
   font-weight: 700;
   margin: 0 0 2px 0;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
@@ -806,7 +806,7 @@ export default {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   border-radius: 50%;
   top: 50%;
   left: -8px;

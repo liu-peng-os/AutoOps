@@ -1,41 +1,106 @@
-html, body, #app {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+/* ============================================================
+   AutoOps Design Tokens
+   OKLCH color system — tinted neutrals toward indigo hue
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --color-accent:        oklch(58% 0.18 265);   /* indigo */
+  --color-accent-hover:  oklch(52% 0.18 265);
+  --color-accent-subtle: oklch(96% 0.02 265);
+  --color-accent-muted:  oklch(90% 0.05 265);
+
+  /* Sidebar surface */
+  --color-sidebar-bg:    oklch(22% 0.06 265);
+  --color-sidebar-deep:  oklch(18% 0.06 265);
+  --color-sidebar-text:  oklch(92% 0.01 265);
+  --color-sidebar-muted: oklch(70% 0.02 265);
+  --color-sidebar-hover: oklch(100% 0 0 / 0.10);
+  --color-sidebar-active-from: oklch(58% 0.18 265);
+  --color-sidebar-active-to:   oklch(48% 0.18 295);
+
+  /* Content surface */
+  --color-bg:            oklch(96% 0.008 265);
+  --color-surface:       oklch(99% 0.004 265);
+  --color-border:        oklch(90% 0.01 265);
+  --color-border-subtle: oklch(94% 0.008 265);
+
+  /* Header */
+  --color-header-bg:     oklch(99% 0.004 265);
+  --color-header-border: oklch(90% 0.02 265);
+
+  /* Text */
+  --color-text-primary:  oklch(22% 0.02 265);
+  --color-text-secondary:oklch(48% 0.02 265);
+  --color-text-muted:    oklch(62% 0.015 265);
+
+  /* Semantic */
+  --color-success:       oklch(58% 0.16 155);
+  --color-warning:       oklch(72% 0.16 75);
+  --color-danger:        oklch(58% 0.20 25);
+  --color-info:          oklch(58% 0.14 230);
+
+  /* Elevation */
+  --shadow-xs:  0 1px 2px oklch(0% 0 0 / 0.06);
+  --shadow-sm:  0 1px 4px oklch(0% 0 0 / 0.08);
+  --shadow-md:  0 4px 12px oklch(0% 0 0 / 0.10);
+  --shadow-lg:  0 8px 24px oklch(0% 0 0 / 0.12);
+
+  /* Radius */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+
+  /* Timing */
+  --duration-fast:   150ms;
+  --duration-normal: 200ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ============================================================
+   Base resets
+   ============================================================ */
+
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================
+   Element Plus overrides — scoped to component classes
+   ============================================================ */
+
 .el-card {
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important; 
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .el-row {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .el-pagination {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
-/* 调整左侧导航菜单间距 - 减少按钮之间的距离 */
+/* Menu item sizing */
 .el-menu-item {
-    height: 45px !important; /* 减少菜单项高度从默认56px到45px */
-    line-height: 45px !important;
-    margin-bottom: 2px !important; /* 添加小的底部间距 */
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
-/* 调整子菜单间距 */
-.el-sub-menu {
-    margin-bottom: 2px !important; /* 减少子菜单间距 */
+.el-sub-menu__title {
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
 .el-sub-menu .el-menu-item {
-    height: 40px !important; /* 子菜单项稍微小一些 */
-    line-height: 40px !important;
-    margin-bottom: 1px !important;
+  height: 38px !important;
+  line-height: 38px !important;
 }
 
-/* 调整子菜单标题间距 */
-.el-sub-menu__title {
-    height: 45px !important;
-    line-height: 45px !important;
+/* Remove el-main default padding — pages control their own spacing */
+.el-main {
+  padding: 0 !important;
 }

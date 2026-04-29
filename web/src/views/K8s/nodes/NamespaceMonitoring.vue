@@ -610,8 +610,7 @@ onMounted(() => {
 <style scoped>
 .namespaces-monitoring {
   padding: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  background: var(--color-bg);
   padding: 12px;
   border-radius: 16px;
 }
@@ -859,7 +858,7 @@ onMounted(() => {
 }
 
 .pods-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
 }
 
 .services-icon {

@@ -6,11 +6,11 @@ server:
 
 db:
   dialects: postgres
-  host: 127.0.0.1
+  host: 52.82.70.176
   port: 5432
-  db: autoops
-  username: postgres
-  password: postgres123456
+  db: mydb
+  username: admin
+  password: 1qaz@WSXQWER
   charset: utf8
   sslMode: disable
   migrationPath: ./migrations
@@ -20,7 +20,7 @@ db:
 
 redis:
   address: 127.0.0.1:6379
-  password: "123456"
+  password: "devops@2025"
 
 imageSettings:
   uploadDir: ./upload/

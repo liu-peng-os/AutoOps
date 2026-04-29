@@ -889,9 +889,8 @@ window.addEventListener('resize', () => {
 
 <style scoped>
 .quick-deployment-container {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -926,9 +925,7 @@ window.addEventListener('resize', () => {
   font-size: 24px;
   font-weight: 700;
   margin: 0 0 12px 0;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
 }
 
 .deployment-meta {
@@ -1374,7 +1371,7 @@ window.addEventListener('resize', () => {
 
 /* 现代对话框样式 */
 .modern-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   padding: 20px 24px;
 }

@@ -188,7 +188,7 @@ function onNodeClick(node) {
 
 .log-content {
   background-color: white;
-  padding: 20px;
+  padding: 12px 16px;
   border-radius: 8px;
   max-width: 600px;
   width: 80%;

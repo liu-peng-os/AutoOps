@@ -275,7 +275,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 10px 15px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   border-bottom: 1px solid #dcdfe6;
 }
 
@@ -306,7 +306,7 @@ onUnmounted(() => {
 }
 
 :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: #fff;
   padding: 20px;
   border-radius: 12px 12px 0 0;

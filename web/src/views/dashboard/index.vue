@@ -647,8 +647,8 @@ onUnmounted(() => {
       <!-- 资产详情 -->
       <div class="stat-card">
         <div class="stat-header">
-          <div class="stat-icon" style="background: #e3f2fd;">
-            <svg viewBox="0 0 48 48" fill="#2196f3">
+          <div class="stat-icon">
+            <svg viewBox="0 0 48 48">
               <path d="M40 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zm0 28H8V16h32v20z"/>
             </svg>
           </div>
@@ -665,8 +665,8 @@ onUnmounted(() => {
       <!-- 服务详情 -->
       <div class="stat-card">
         <div class="stat-header">
-          <div class="stat-icon" style="background: #e8f5e9;">
-            <svg viewBox="0 0 48 48" fill="#4caf50">
+          <div class="stat-icon">
+            <svg viewBox="0 0 48 48">
               <path d="M38 6H10c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V10c0-2.21-1.79-4-4-4zM24 34c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
             </svg>
           </div>
@@ -683,8 +683,8 @@ onUnmounted(() => {
       <!-- 发布详情 -->
       <div class="stat-card">
         <div class="stat-header">
-          <div class="stat-icon" style="background: #fff3e0;">
-            <svg viewBox="0 0 48 48" fill="#ff9800">
+          <div class="stat-icon">
+            <svg viewBox="0 0 48 48">
               <path d="M20 8l-8 8h6v12h4V16h6l-8-8zm8 24h-6v-12h-4v12h-6l8 8 8-8z"/>
             </svg>
           </div>
@@ -701,8 +701,8 @@ onUnmounted(() => {
       <!-- 监控告警 -->
       <div class="stat-card">
         <div class="stat-header">
-          <div class="stat-icon" style="background: #fce4ec;">
-            <svg viewBox="0 0 48 48" fill="#e91e63">
+          <div class="stat-icon stat-icon--warning">
+            <svg viewBox="0 0 48 48">
               <path d="M2 42h44L24 4 2 42zm24-6h-4v-4h4v4zm0-8h-4v-8h4v8z"/>
             </svg>
           </div>
@@ -896,7 +896,7 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .dashboard {
   padding: 20px;
-  background: #eef1f6;
+  background: var(--color-bg);
   min-height: calc(100vh - 60px);
 }
 
@@ -904,20 +904,20 @@ onUnmounted(() => {
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .stat-card {
-  background: white;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
   padding: 16px 18px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-subtle);
+  transition: box-shadow var(--duration-normal) var(--ease-out);
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
   }
 }
 
@@ -927,27 +927,37 @@ onUnmounted(() => {
   gap: 10px;
   margin-bottom: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .stat-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .stat-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: var(--color-accent-subtle);
 
   svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
+    fill: var(--color-accent);
+  }
+
+  &.stat-icon--warning {
+    background: oklch(96% 0.02 75);
+
+    svg {
+      fill: var(--color-warning);
+    }
   }
 }
 
@@ -961,76 +971,79 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  padding: 3px 0;
 }
 
 .item-label {
-  font-size: 13px;
-  color: #666;
+  font-size: 12px;
+  color: var(--color-text-muted);
 }
 
 .item-value {
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 // 图表行
 .charts-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .chart-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  height: 400px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-subtle);
+  height: 380px;
 
   &.large {
-    height: 400px;
+    height: 380px;
   }
 }
 
 .chart-header {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .time-range-tabs,
 .resource-tabs {
   display: flex;
-  gap: 8px;
-  background: #f5f7fa;
-  padding: 4px;
-  border-radius: 6px;
+  gap: 2px;
+  background: var(--color-bg);
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
 }
 
 .tab-btn {
-  padding: 6px 16px;
+  padding: 4px 14px;
   border: none;
   background: transparent;
-  color: #666;
-  font-size: 13px;
+  color: var(--color-text-muted);
+  font-size: 12px;
   cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
 
   &:hover {
-    color: #333;
-    background: rgba(255, 255, 255, 0.5);
+    color: var(--color-text-secondary);
+    background: var(--color-border-subtle);
   }
 
   &.active {
-    background: white;
-    color: #2196f3;
+    background: var(--color-surface);
+    color: var(--color-accent);
     font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-xs);
   }
 }
 
@@ -1038,53 +1051,53 @@ onUnmounted(() => {
 .bottom-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 // 快捷工具
 .tools-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-subtle);
 }
 
 .tools-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .tools-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .add-tool-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
-  background: #2196f3;
-  color: white;
+  padding: 5px 12px;
+  background: var(--color-accent);
+  color: oklch(100% 0 0);
   border: none;
-  border-radius: 4px;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background var(--duration-fast) var(--ease-out);
 
   &:hover {
-    background: #1976d2;
-    transform: translateY(-1px);
+    background: var(--color-accent-hover);
   }
 }
 
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 .tool-item {
@@ -1092,13 +1105,13 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 8px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  gap: 6px;
+  padding: 12px 6px;
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast) var(--ease-out);
 
   &:hover {
-    background: #f8f9fa;
+    background: var(--color-accent-subtle);
 
     .tool-actions {
       opacity: 1;
@@ -1111,44 +1124,44 @@ onUnmounted(() => {
   top: 4px;
   right: 4px;
   display: flex;
-  gap: 4px;
+  gap: 3px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--duration-fast) var(--ease-out);
 }
 
 .action-btn {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background var(--duration-fast), color var(--duration-fast);
 
   svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   &.edit-btn {
-    background: #e3f2fd;
-    color: #2196f3;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
 
     &:hover {
-      background: #2196f3;
-      color: white;
+      background: var(--color-accent);
+      color: oklch(100% 0 0);
     }
   }
 
   &.delete-btn {
-    background: #ffebee;
-    color: #f44336;
+    background: oklch(96% 0.01 25);
+    color: var(--color-danger);
 
     &:hover {
-      background: #f44336;
-      color: white;
+      background: var(--color-danger);
+      color: oklch(100% 0 0);
     }
   }
 }
@@ -1157,20 +1170,20 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
 }
 
 .tool-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #f5f7fa;
-  border: 1px solid #e4e7ed;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
 
   img {
     width: 100%;
@@ -1179,84 +1192,84 @@ onUnmounted(() => {
   }
 
   .icon-placeholder {
-    font-size: 24px;
-    color: #c0c4cc;
+    font-size: 20px;
+    color: var(--color-text-muted);
   }
 }
 
-.tool-info {
-  text-align: center;
-}
-
 .tool-name {
-  font-size: 13px;
-  color: #606266;
+  font-size: 12px;
+  color: var(--color-text-secondary);
   font-weight: 500;
+  text-align: center;
 }
 
 // 编辑弹窗样式
 .edit-form {
-  padding: 10px 0;
+  padding: 8px 0;
 }
 
 .form-item {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 
   label {
     display: block;
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
     font-weight: 500;
 
     .required {
-      color: #f56c6c;
-      margin-right: 4px;
+      color: var(--color-danger);
+      margin-right: 3px;
     }
   }
 }
 
 .form-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition: border-color var(--duration-fast) var(--ease-out);
   box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: #2196f3;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-muted);
   }
 
   &::placeholder {
-    color: #c0c4cc;
+    color: var(--color-text-muted);
   }
 }
 
 .form-tip {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #909399;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--color-text-muted);
 }
 
 .icon-upload-wrapper {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .icon-preview-box {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #dcdfe6;
+  border: 1px dashed var(--color-border);
   overflow: hidden;
-  background: #fafafa;
+  background: var(--color-bg);
 
   img {
     width: 100%;
@@ -1269,71 +1282,72 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: #c0c4cc;
+    color: var(--color-text-muted);
 
     svg {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
     }
 
     span {
-      font-size: 11px;
+      font-size: 10px;
     }
   }
 }
 
 .upload-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 20px;
-  background: #f5f7fa;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #606266;
+  padding: 8px 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background var(--duration-fast), border-color var(--duration-fast), color var(--duration-fast);
 
   &:hover {
-    background: #2196f3;
-    border-color: #2196f3;
-    color: white;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: oklch(100% 0 0);
   }
 }
 
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding-top: 10px;
+  gap: 10px;
+  padding-top: 8px;
 }
 
 .btn-cancel,
 .btn-confirm {
-  padding: 8px 20px;
+  padding: 7px 18px;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background var(--duration-fast) var(--ease-out);
 }
 
 .btn-cancel {
-  background: #f5f7fa;
-  color: #606266;
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 
   &:hover {
-    background: #e0e3e8;
+    background: var(--color-border-subtle);
   }
 }
 
 .btn-confirm {
-  background: #2196f3;
-  color: white;
+  background: var(--color-accent);
+  color: oklch(100% 0 0);
 
   &:hover {
-    background: #1976d2;
+    background: var(--color-accent-hover);
   }
 }
 
@@ -1363,12 +1377,12 @@ onUnmounted(() => {
 
   .stats-cards {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .charts-row,
   .bottom-row {
-    gap: 12px;
+    gap: 10px;
   }
 
   .tools-grid {

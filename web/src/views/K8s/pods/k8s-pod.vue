@@ -2941,9 +2941,8 @@ const handleGoBack = () => {
 
 <style scoped>
 .k8s-pod-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .pod-card {
@@ -2970,10 +2969,7 @@ const handleGoBack = () => {
   font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
 }
 
 .header-actions {

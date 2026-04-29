@@ -394,7 +394,7 @@ export default {
 <style scoped>
 .ssh-container {
   height: calc(100vh - 120px);
-  padding: 20px;
+  padding: 12px 16px;
 }
 
 .ssh-layout {

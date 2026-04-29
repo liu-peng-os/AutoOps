@@ -259,7 +259,7 @@ const deleteNamespace = (row) => {
 }
 
 .namespace-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .namespace-table :deep(.el-table__header th) {

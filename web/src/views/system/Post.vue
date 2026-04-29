@@ -462,9 +462,8 @@ export default {
 
 <style lang="less" scoped>
 .post-management {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    background: var(--color-bg);
+  padding: 12px 16px;
   
   .main-card {
     background: rgba(255, 255, 255, 0.95);
@@ -734,7 +733,7 @@ export default {
       }
       
       th {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        background: var(--color-bg);
         border-bottom: none;
         color: #2c3e50 !important;
         font-weight: 700 !important;
@@ -893,7 +892,7 @@ export default {
       }
       
       &.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--color-bg);
         color: #ffffff;
         border-color: transparent;
       }

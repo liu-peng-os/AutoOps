@@ -2174,9 +2174,8 @@ const deleteWorkload = async (row) => {
 
 <style scoped>
 .k8s-workloads-management {
-  padding: 20px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 16px;
+    background: var(--color-bg);
 }
 
 .workloads-card {
@@ -2197,10 +2196,7 @@ const deleteWorkload = async (row) => {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
 }
 
 .header-actions {
@@ -2263,7 +2259,7 @@ const deleteWorkload = async (row) => {
 }
 
 .workloads-table :deep(.el-table__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
 }
 
 .workloads-table :deep(.el-table__header th) {
@@ -2683,7 +2679,7 @@ const deleteWorkload = async (row) => {
 .scale-dialog :deep(.el-dialog__header),
 .workload-labels-view-dialog :deep(.el-dialog__header),
 .all-images-dialog :deep(.el-dialog__header) {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-bg);
   color: white;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

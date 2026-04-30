@@ -112,6 +112,10 @@ services:
       DB_AUTO_MIGRATE: ${DB_AUTO_MIGRATE:-true}
       REDIS_ADDR: ${REDIS_ADDR:-redis:6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-devops@2025}
+      DNSMGR_ENABLED: ${DNSMGR_ENABLED:-false}
+      DNSMGR_BASE_URL: ${DNSMGR_BASE_URL:-}
+      DNSMGR_UID: ${DNSMGR_UID:-}
+      DNSMGR_API_KEY: ${DNSMGR_API_KEY:-}
     volumes:
       - ../api/config.yaml:/app/config.yaml:ro
       - ../api/migrations:/app/migrations:ro

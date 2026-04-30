@@ -179,6 +179,8 @@ func applyEnvOverrides(cfg *config) {
 	applyStringEnv("HEARTBEAT_SERVER_URL", &cfg.Monitor.Agent.HeartbeatServerURL)
 	applyStringEnv("HEARTBEAT_TOKEN", &cfg.Monitor.Agent.HeartbeatToken)
 	applyStringEnv("WEBHOOK_TOKEN", &cfg.Monitor.Webhook.Token)
+
+	applyDnsmgrEnvOverrides(cfg)
 }
 
 func applyStringEnv(key string, target *string) {
@@ -206,5 +208,59 @@ func applyBoolEnv(key string, target *bool) {
 
 	if parsed, err := strconv.ParseBool(value); err == nil {
 		*target = parsed
+	}
+}
+
+func applyDnsmgrEnvOverrides(cfg *config) {
+	baseURL := os.Getenv("DNSMGR_BASE_URL")
+	uid := os.Getenv("DNSMGR_UID")
+	apiKey := os.Getenv("DNSMGR_API_KEY")
+	enabledValue := os.Getenv("DNSMGR_ENABLED")
+	if baseURL == "" && uid == "" && apiKey == "" && enabledValue == "" {
+		return
+	}
+
+	index := -1
+	for i, system := range cfg.Integrations.Systems {
+		if system.Provider == "dnsmgr" || system.Key == "dnsmgr" || system.Key == "domain-management" {
+			index = i
+			break
+		}
+	}
+	if index == -1 {
+		cfg.Integrations.Systems = append(cfg.Integrations.Systems, ExternalSystem{
+			Key:         "domain-management",
+			DisplayName: "dnsmgr",
+			Category:    "domain",
+			Provider:    "dnsmgr",
+			Mode:        "read-only",
+			Capabilities: []string{
+				"domain:list",
+				"record:list",
+			},
+			Metadata: map[string]string{},
+		})
+		index = len(cfg.Integrations.Systems) - 1
+	}
+
+	system := &cfg.Integrations.Systems[index]
+	if system.Metadata == nil {
+		system.Metadata = map[string]string{}
+	}
+	if baseURL != "" {
+		system.BaseURL = baseURL
+	}
+	if uid != "" {
+		system.Metadata["uid"] = uid
+	}
+	if apiKey != "" {
+		system.Metadata["apiKey"] = apiKey
+	}
+	if enabledValue != "" {
+		if enabled, err := strconv.ParseBool(enabledValue); err == nil {
+			system.Enabled = enabled
+		}
+	} else if baseURL != "" && uid != "" && apiKey != "" {
+		system.Enabled = true
 	}
 }

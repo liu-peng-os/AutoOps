@@ -10,6 +10,7 @@ const apiTarget = process.env.VUE_APP_API_TARGET || 'http://127.0.0.1:8000'
 module.exports = defineConfig({
   lintOnSave: false,   // 关闭校验
   productionSourceMap: false, // 关闭生产环境sourceMap
+  parallel: false,
   publicPath:"/",
   configureWebpack: {},
   outputDir: "dist",

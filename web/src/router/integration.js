@@ -1,7 +1,7 @@
 const routes = [
     {
         path: '/integration/domain',
-        component: () => import('@/views/integration/ExternalModuleLanding.vue'),
+        component: () => import('@/views/integration/DomainManagement.vue'),
         props: {
             pageKey: 'domain-management',
             title: '域名管理',

@@ -15,9 +15,14 @@ func RegisterIntegrationRoutes(router *gin.RouterGroup) {
 	domainGroup := router.Group("/domain")
 	{
 		domainGroup.GET("/health", domainCtrl.Health)
-		domainGroup.POST("/sync", domainCtrl.Sync)
-		domainGroup.GET("/sync/last", domainCtrl.LastSync)
-		domainGroup.GET("/zones", domainCtrl.ListZones)
+		domainGroup.GET("/domains", domainCtrl.ListDomains)
+		domainGroup.GET("/domains/:id", domainCtrl.DomainDetail)
 		domainGroup.GET("/records", domainCtrl.ListRecords)
+		domainGroup.POST("/domains/:domainId/records", domainCtrl.AddRecord)
+		domainGroup.PUT("/domains/:domainId/records/:recordId", domainCtrl.UpdateRecord)
+		domainGroup.DELETE("/domains/:domainId/records/:recordId", domainCtrl.DeleteRecord)
+		domainGroup.PUT("/domains/:domainId/records/:recordId/status", domainCtrl.SetRecordStatus)
+		domainGroup.PUT("/domains/:domainId/records/:recordId/remark", domainCtrl.SetRecordRemark)
+		domainGroup.POST("/domains/:domainId/records/batch", domainCtrl.BatchRecords)
 	}
 }

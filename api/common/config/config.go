@@ -233,10 +233,17 @@ func applyDnsmgrEnvOverrides(cfg *config) {
 			DisplayName: "dnsmgr",
 			Category:    "domain",
 			Provider:    "dnsmgr",
-			Mode:        "read-only",
+			Mode:        "live-api",
 			Capabilities: []string{
 				"domain:list",
+				"domain:detail",
 				"record:list",
+				"record:create",
+				"record:update",
+				"record:delete",
+				"record:status",
+				"record:remark",
+				"record:batch",
 			},
 			Metadata: map[string]string{},
 		})

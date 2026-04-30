@@ -13,21 +13,16 @@ export default {
             method: 'get'
         })
     },
-    domainSync() {
+    domainList(params) {
         return request({
-            url: '/domain/sync',
-            method: 'post'
+            url: '/domain/domains',
+            method: 'get',
+            params
         })
     },
-    domainLastSync() {
+    domainDetail(id, params) {
         return request({
-            url: '/domain/sync/last',
-            method: 'get'
-        })
-    },
-    domainZones(params) {
-        return request({
-            url: '/domain/zones',
+            url: `/domain/domains/${id}`,
             method: 'get',
             params
         })
@@ -37,6 +32,47 @@ export default {
             url: '/domain/records',
             method: 'get',
             params
+        })
+    },
+    domainRecordAdd(domainId, data) {
+        return request({
+            url: `/domain/domains/${domainId}/records`,
+            method: 'post',
+            data
+        })
+    },
+    domainRecordUpdate(domainId, recordId, data) {
+        return request({
+            url: `/domain/domains/${domainId}/records/${recordId}`,
+            method: 'put',
+            data
+        })
+    },
+    domainRecordDelete(domainId, recordId) {
+        return request({
+            url: `/domain/domains/${domainId}/records/${recordId}`,
+            method: 'delete'
+        })
+    },
+    domainRecordStatus(domainId, recordId, status) {
+        return request({
+            url: `/domain/domains/${domainId}/records/${recordId}/status`,
+            method: 'put',
+            data: { status }
+        })
+    },
+    domainRecordRemark(domainId, recordId, remark) {
+        return request({
+            url: `/domain/domains/${domainId}/records/${recordId}/remark`,
+            method: 'put',
+            data: { remark }
+        })
+    },
+    domainRecordBatch(domainId, data) {
+        return request({
+            url: `/domain/domains/${domainId}/records/batch`,
+            method: 'post',
+            data
         })
     }
 }
